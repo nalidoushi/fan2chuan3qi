@@ -26,5 +26,20 @@ public class Demo {
         System.out.println(line);
 
 
+        Point p2 = new Point(1,2);
+        System.out.println("p2:"+p2);
+        /*
+            引用类型变量保存的是对象的"地址"
+            ==是值比较,比较两个变量的值是否相同,对于引用类型变量而言相当于比较的
+            是地址是否相同,逻辑:比较是否为同一个对象
+         */
+        System.out.println(point==p2);//false
+        /*
+            Object定义了equals方法,目的是比较两个对象的内容是否相同
+            但是站在Object的角度,"东西"是没有特征的,因此它的默认实现使用"=="比较
+            因此,子类如果希望比较两个实例是否内容相同需要重写该方法,结合自身的特征
+            进行比较.
+         */
+        System.out.println(point.equals(p2));//true
     }
 }

@@ -1,5 +1,7 @@
 package object;
 
+import java.util.Objects;
+
 /**
  * Point:点
  * 设计Point类用于表示直角坐标系上任意的一个点
@@ -37,6 +39,19 @@ public class Point {
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return x == point.x && y == point.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }
 
