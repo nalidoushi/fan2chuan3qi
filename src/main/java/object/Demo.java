@@ -17,6 +17,13 @@ public class Demo {
 //        System.out.println(line);
         //输出时会调用point的toString方法将转换的字符串输出到控制台上
         System.out.println(point);
+        /*
+            另一个常见操作:
+            字符串和任何类型连接,结果都是字符串,意味着其它类型都可以转换为字符串
+            转换字符串也是依靠着toString方法
+         */
+        String line = "这是一个点:" + point;
+        System.out.println(line);
 
 
     }
