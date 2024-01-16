@@ -12,7 +12,8 @@ package string;
 public class StringBuilderDemo {
     public static void main(String[] args) {
         String str = "好好学习java";
-        StringBuilder builder = new StringBuilder(str);
+//        StringBuilder builder = new StringBuilder(str);
+        StringBuffer builder = new StringBuffer(str);
         /*
             增:append
             好好学习java
