@@ -1,0 +1,46 @@
+package collection;
+
+/**
+ * 使用当前类实例测试集合的操作
+ */
+public class Point {
+    private int x;
+    private int y;
+
+    public Point(){}
+
+    //alt+insert快捷键,生成构造器,get,set方法等
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+}
+
+
+
+
