@@ -57,7 +57,11 @@ public class IteratorDemo {
                     使用迭代器遍历集合的过程中不可以通过集合的方法增删元素
                     否则会抛出异常:java.util.ConcurrentModificationException
                  */
-                c.remove(e);
+//                c.remove(e);
+                /*
+                    迭代器也提供了remove方法,删除本次通过next方法获取的元素
+                 */
+                it.remove();
             }
             System.out.println(e);
         }
