@@ -23,9 +23,13 @@ public class IteratorDemo {
     public static void main(String[] args) {
         Collection<String> c = new ArrayList<>();
         c.add("one");
+        c.add("#");
         c.add("two");
+        c.add("#");
         c.add("three");
+        c.add("#");
         c.add("four");
+        c.add("#");
         c.add("five");
         System.out.println(c);
 
@@ -46,8 +50,19 @@ public class IteratorDemo {
          */
         while(it.hasNext()){
             String e = it.next();
+            //遍历过程中将"#"元素删除
+            if("#".equals(e)){//好的书写习惯:字符串字面量与变量equals时应当写为:字面量.equals(变量);避免空指针的产生
+                /*
+                    迭代器要求:
+                    使用迭代器遍历集合的过程中不可以通过集合的方法增删元素
+                    否则会抛出异常:java.util.ConcurrentModificationException
+                 */
+                c.remove(e);
+            }
             System.out.println(e);
         }
+        System.out.println(c);
+
     }
 }
 
