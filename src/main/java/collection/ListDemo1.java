@@ -1,6 +1,7 @@
 package collection;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,6 +51,22 @@ public class ListDemo1 {
         String old = list.set(3,"six");
         System.out.println(list);
         System.out.println(old);
+
+
+        //把list集合元素反转
+        //思路:第一个元素和最后一个元素交换位置,依次操作.
+        //[one, two, three, six, five]
+        for(int i=0;i<list.size()/2;i++){
+            String s = list.get(i);//先将正数位置上的元素获取到
+            s = list.set(list.size()-1-i,s);//将他放入倒数位置上并获取原倒数位置元素
+            list.set(i,s);//将原倒数位置元素放到正数位置上
+        }
+
+        //[five,six,three,two,one]
+        System.out.println(list);
+        //java.util.Collections是集合的工具类,静态方法reverse可以翻转集合
+        Collections.reverse(list);
+        System.out.println(list);
     }
 }
 
