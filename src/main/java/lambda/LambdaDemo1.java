@@ -1,6 +1,9 @@
 package lambda;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * JDK8之后，java推出了一个新特性:lambda表达式
@@ -35,6 +38,12 @@ public class LambdaDemo1 {
         //如果方法体只有一句代码，方法体的"{}"可以忽略，同时return关键字也要一同忽略
         Comparator<String> c3 = (o1, o2)->o2.length()-o1.length();
 
+        List<String> list = new ArrayList<>();
+        list.add("王克晶");
+        list.add("传奇");
+        list.add("伟超老师");
+        Collections.sort(list,(o1, o2)->o2.length()-o1.length());
+        System.out.println(list);
     }
 }
 
