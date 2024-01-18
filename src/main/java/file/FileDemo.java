@@ -38,9 +38,29 @@ public class FileDemo {
         //获取当前File表示的文件或目录的名字
         String name = file.getName();
         System.out.println(name);
+        /*
+            00000000   1byte   8位2进制为1个字节
+            1024 byte  1kb
+            1024 kb    1mb
+            1024 mb    1gb
+            1024gb     1tb
+         */
         //获取当前File表的文件的长度(单位是字节)
         long length = file.length();
         System.out.println(length+"字节");
+        /*
+            read:读
+            write:写
+         */
+        boolean cr = file.canRead();
+        boolean cw = file.canWrite();
+        System.out.println("是否可读:"+cr);
+        System.out.println("是否可写:"+cw);
+        /*
+            hidden:隐藏
+         */
+        boolean ih = file.isHidden();
+        System.out.println("是否被隐藏:"+ih);
 
     }
 }
