@@ -26,10 +26,13 @@ public class SortListDemo3 {
         list.add("伟超老师");
         System.out.println(list);
 //        Collections.sort(list);
+        //为排序字符串定义比较规则:按照字符多少排序
         Collections.sort(list, new Comparator<String>() {
             @Override
             public int compare(String o1, String o2) {
-                return o1.length()-o2.length();
+//                return o1.length()-o2.length();
+                //反过来减就可以实现降序
+                return o2.length()-o1.length();
             }
         });
         System.out.println(list);
