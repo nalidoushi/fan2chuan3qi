@@ -13,9 +13,10 @@ public class FileScanDemo {
      * @param file
      */
     static void doScanXml(File file){
-        File files[]=file.listFiles();
+        File[] files=file.listFiles();
         for(File f:files){
             if(f.isDirectory()){
+                //自身调用自身
                 doScanXml(f);
             }else{
                 if(f.getName().endsWith(".xml"))

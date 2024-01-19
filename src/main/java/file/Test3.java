@@ -10,7 +10,18 @@ public class Test3 {
         File dir = new File("./a");
         delete(dir);
     }
+    /**递归删除指定目录下的所有目录和文件*/
     public static void delete(File f){
-
+        if(f.exists()&&f.isDirectory()){
+            File[] files = f.listFiles();
+            for(File subFile:files){
+                if(subFile.isDirectory()){
+                    delete(subFile);//递归调用
+                }else{
+                    subFile.delete();
+                }
+            }
+        }
+        f.delete();
     }
 }
