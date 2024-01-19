@@ -1,5 +1,12 @@
 package wrapper;
 
+/**
+ * Integer类中默认有一个IntegerCache类型的对象(整数池)
+ * ,设计此池的目的是通过对象复用方式,减少对象的创建,
+ * 提高其执行效率.
+ * 说明:在特殊情况下,可通过调整JVM参数来修改池大小,这里只能修改最大,
+ * -XX:AutoBoxCacheMax=<size>,这里的size可以替换为300,500等
+ */
 public class IntegerTests {
     public static void main(String[] args) {
         Integer a1=100;  //自动装箱，底层调用valueOf进行自动装箱
