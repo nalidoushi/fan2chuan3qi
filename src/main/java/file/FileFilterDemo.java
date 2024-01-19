@@ -47,7 +47,7 @@ public class FileFilterDemo {
                 return file.isFile()&file.getName().toLowerCase().endsWith(".xml");
             }
         };
-        //3.2应用过滤器获取文件
+        //3.2应用过滤器获取文件(应用lambda表达式)
         File[] fileArray=dir.listFiles(
                 file->file.isFile()&
                         file.getName().toLowerCase().endsWith(".xml"));
