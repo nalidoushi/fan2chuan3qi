@@ -11,7 +11,8 @@ import java.nio.charset.StandardCharsets;
  */
 public class ReadStringDemo {
     public static void main(String[] args) throws IOException {
-        File file = new File("fos2.txt");
+//        File file = new File("fos2.txt");
+        File file = new File("./src/main/java/io/ReadStringDemo.java");
         FileInputStream fis = new FileInputStream(file);
         long len = file.length();//获取文件长度
         byte[] data = new byte[(int)len];
