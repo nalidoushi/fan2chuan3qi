@@ -13,7 +13,12 @@ public class Person implements Serializable {
     private String name;
     private int age;
     private char gender;
-    private String[] otherInfo;
+    /*
+        transient:瞬间的
+        被该关键字修饰的属性在序列化时,它的值会被忽略
+        忽略不必要的属性可以达到对象"瘦身"的目的
+     */
+    private transient String[] otherInfo;
 
     public Person() {
     }
