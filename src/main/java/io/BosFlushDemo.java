@@ -19,9 +19,11 @@ public class BosFlushDemo {
         bos.write(data);
         /*
             flush:冲水
-
             void flush()
             强制要求缓冲输出流将内部缓冲区中已经缓存的数据全部写出
+
+            flush方法是在接口:Flushable上定义的.
+            而该接口已经被OutputStream实现了,这意味着java中所有的输出流都有这个方法
          */
 //        bos.flush();
         System.out.println("写出完毕");
