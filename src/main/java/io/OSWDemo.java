@@ -27,7 +27,8 @@ public class OSWDemo {
     public static void main(String[] args) throws IOException {
         //向文件中写入文本数据
         FileOutputStream fos = new FileOutputStream("osw.txt");
-        OutputStreamWriter osw = new OutputStreamWriter(fos);
+        //创建转换流时可以明确字符集
+        OutputStreamWriter osw = new OutputStreamWriter(fos,StandardCharsets.UTF_8);
 
 //        String line = "我期待的不是雪,而是有你的冬天.";
 //        byte[] data = line.getBytes(StandardCharsets.UTF_8);
