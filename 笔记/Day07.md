@@ -166,3 +166,43 @@ public class IOExcetionDemo {
 
 ```
 
+## 自关闭特性
+
+我们创建的对象需要关闭时，一种方法是写在finally中，还有一种方式在try()接口中直接创建，
+这样对象无需手动再关闭。前提时try内部的对象需要实现 AutoCloseable 接口。
+
+```java
+package io;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+public class AutoCloseableDemo {
+    public static void main(String[] args) {
+        try(
+                FileOutputStream fos =//这里构建对象无需手动关闭
+                        new FileOutputStream("./abc/f1.txt", true);
+        ){
+            //1.构建输出流对象(编译阶段能够检测到的异常我们通常称之为检查异常)
+            //2.写数据到文件
+            String s="hello";
+            fos.write(s.getBytes(StandardCharsets.UTF_8));
+        }catch (FileNotFoundException | NullPointerException e){
+            // System.out.println("文件没找到:"+e.getMessage());
+            e.printStackTrace();//打印异常栈信息(包含的异常信息会更全面)
+            //return;//遇到return语句时，是先finally，然后再返回
+            //System.exit(-1);这条语句执行时，finally不在执行
+        } catch (IOException e){
+            System.out.println("写数据或关闭流时出现了问题:"+e.getMessage());
+        }
+    }
+}
+
+```
+## throw关键字应用
+
+throw关键字的作用主要是用于抛出异常。
+
+
+
