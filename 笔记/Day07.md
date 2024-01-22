@@ -33,6 +33,8 @@
 
 ## 入门案例分享
 
+* 基于try{}catch(xx){}结构处理空指针异常
+
 ```
 package exception;
 public class NPEDemo{//NullPointerException->NPE
@@ -56,14 +58,17 @@ public class NPEDemo{//NullPointerException->NPE
             System.out.println("程序中的str的值不能null");
             result=null;
         }
-        //假如上面的语句出现了异常，下面输出语句是不会执行的。
         System.out.println(result);
     }
 
 }
 
 ```
+* 多catch(xx){}结构异常处理
 
+```java
+
+```
 
 
 
