@@ -263,7 +263,6 @@ public class ThrowsDemo {
         doCopy();
     }
 }
-
 ```
 - throws 关键字后可以抛出多个异常类型，这里抛出异常类型可以是方法内部抛出异常类型的父类类型。
 - 方法重写时，子类方法抛出的异常可以和父类方法相同或者时父类方法异常的子类类型。
@@ -271,6 +270,35 @@ public class ThrowsDemo {
 
 
 
+## Java中的检查和非检查异常
 
+* 检查异常：编译阶段，编译器能够检测到异常，这种异常必须处理，处理的方式，要么捕获，要么继续抛出。
+* 非检查异常：编译阶段无法检测到的异常，程序员对此类异常可以有选择性的处理。
+  典型代表为RuntimeException或它的子类。
+  
+## 自定义异常？
 
+当系统提供的异常类型，不足以满足我们对异常的需求时，我们可以选择自定义异常，尤其是
+和业务相关性比较的异常。 例如PhoneNotFoundException;
+我们自定义异常一般都是继承RuntimeException或Exception类型，然后重写相关方法。
+
+```java
+
+package exception;
+/**
+ * 自定义异常
+ */
+public class PhoneNotFoundException extends RuntimeException{
+    private static final long serialVersionUID = -6274120866460982066L;
+
+    public PhoneNotFoundException() {
+    }
+    public PhoneNotFoundException(String message) {
+        super(message);
+    }
+    public PhoneNotFoundException(Throwable e) {
+        super(e);
+    }
+}
+```
 
