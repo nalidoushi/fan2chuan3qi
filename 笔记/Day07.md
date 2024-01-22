@@ -202,7 +202,75 @@ public class AutoCloseableDemo {
 ```
 ## throw关键字应用
 
-throw关键字的作用主要是用于抛出异常。
+throw关键字的作用主要是用于抛出异常，这个关键字后面跟的是异常对象。
+这个异常会抛给调用着，谁调用了这个方法，这个异常就抛给谁。
+```java
+
+package io;
+public class ThrowDemo {
+    static void doCompute01(int a,int b){
+        if(b==0) {
+            //抛出参数无效的异常,这里用户传什么参数我们决定不了
+            //只能告诉用户你传递的参数是非法的，是不合理的。
+            throw new IllegalArgumentException("除数不能为0");
+        }
+        int result=a/b;
+        System.out.println(result);
+    }
+
+    static void doCompute02(int a,int b){
+        try {
+            int result = a / b;
+            System.out.println(result);
+        }catch (ArithmeticException e){
+            //这里以后是日志记录
+            System.out.println("除数不能为0");
+            throw e;//处理以后，可以继续抛给调用着
+        }
+        System.out.println("==finish==");
+    }
+    public static void main(String[] args) {
+      doCompute01(10,0);
+      doCompute02(10,0);
+    }
+}
+```
+
+## throws关键字应用
+
+throws关键字用于方法声明处，声明要抛出的异常，这个关键字后跟的是异常类型。
+它的目的是告诉调用方，这个方法可能会出现此类型的异常，你要引起注意。当然
+方法内的异常你不想处理，可通过此关键字声明抛出。
+
+```java
+package io;
+
+import java.io.*;
+public class ThrowsDemo {
+
+    public static void doCopy() throws IOException {
+        FileInputStream fis=new FileInputStream("a.png");
+        FileOutputStream fos=new FileOutputStream("c.png");
+        byte[] buf=new byte[fis.available()];
+        fis.read(buf);
+        fos.write(buf);
+        fis.close();
+        fos.close();
+        System.out.println("copy ok");
+    }
+
+    public static void main(String[] args) throws IOException{
+        doCopy();
+    }
+}
+
+```
+- throws 关键字后可以抛出多个异常类型，这里抛出异常类型可以是方法内部抛出异常类型的父类类型。
+- 方法重写时，子类方法抛出的异常可以和父类方法相同或者时父类方法异常的子类类型。
+- 方法重写时，子类方法抛出的异常个数不能多于父类方法抛出异常的异常个数。
+
+
+
 
 
 
