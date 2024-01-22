@@ -1,11 +1,22 @@
-# 知识点回顾
+# File和IO重难点回顾
 
-* 高级流和低级流(节点流)
-* 序列化和反序列化
-* 字符流和转换流
+* File对象的含义?(代表计算机中的文件和目录)
+* 基于File对象进行文件操作?(创建目录和文件,查找文件和目录,删除目录和文件,复制文件和目录,...)  
+* I/O流(读写内存,磁盘,网络中数据的对象,这里的流为数据流,这里的I/O为读写数据的对象)
+* I/O流分类(按流向可分为输出流和输入流,按处理单元可划分为字节流和字符流,按功能单元可分为高级流和节点流)
+* I/O的应用(创建流对象,读写数据,释放资源)
+* 字节流超类(InputStream/OutputStream)
+* 文件字节流(FileInputStream/FileOutputStream)
+* 高级处理流(BufferedInputStream/BuffedOutputStream,ObjectOutputStream/ObjecInputStream,...)
+* 字符流超类(Reader/Writer,本质上还是字节流)
+* 文件字符流(FileReader/FileWriter)
+* 转换流(InputStreamReader/OutputStreamWriter)  
+* 打印流(PrintWriter)
 
 # FAQ分析
-
+* 如何理解项目中的文件上传?(从本地读,然后写到远端服务器上)
+* 如何理解项目中文件的下载?(读远端服务器上的数据,然后写到本地电脑上)  
+* IO读写数据时常见的异常是什么?(FileNotFoundException,IOException)
 * 高级流和低级流这里用到了什么设计模式？(装饰模式-例如高级流在低级流的基础上进行装饰)
 * 序列化的应用场景？(内存对象的持久化，写入缓存，网络数据交互)  
 * serialVersionUID作用？(保证序列化和反序列化的正确性)
@@ -301,4 +312,31 @@ public class PhoneNotFoundException extends RuntimeException{
     }
 }
 ```
+
+# 总结(Summary)
+
+## 重难点分析
+* 异常的定义?(什么是异常,异常类型,异常的处理,自定义异常)
+* 异常的类型?(Throwable,Exception,Error)
+* 异常的处理?(异常捕获,异常抛出)
+* 异常的捕获?(try{可能有异常异常语句}catch(异常类型){异常处理},
+  try{}catch(){}...,try{}catch(){}....finally{},try{}finally{},异常合并,自动关闭)
+* 异常的抛出?(throw-方法内部抛出异常对象,throws-方法声明处抛出异常)
+* 检查异常和非检查异常(编译器能够检测到的异常称之为检查异常)
+* 自定义异常?(直接或间接的继承Exception或RuntimeException,然后添加构造方法)
+
+## 常见FAQ
+
+* 为什么要有异常的定义?(控制程序的执行流,实现与调用方交互)
+* Java中异常的超类类型是什么?(Throwable)
+* Java中非检查异常的类型是什么?(RuntimeException-运行时异常)
+* throws关键字的做用是什么?(声明方法执行时可能出现的异常)
+* throw关键字的作用是什么?(在方法内声明抛出异常,控制程序的执行流)
+* try{}代码块越大越好吗?(不是,太大会对性能有一定的影响)
+* finally代码块的作用?(通常在这里会释放资源)
+* finally代码块什么情况下不执行?(System.exist(-1))
+* 我们为什么要自己定义异常类型?(业务需要,官方定义的异常不能满足我们需求)
+
+
+
 
