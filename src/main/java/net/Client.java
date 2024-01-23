@@ -20,6 +20,7 @@ public class Client {
         ObjectOutputStream out=null;
         try
         {
+          //向服务端写数据
           out=new ObjectOutputStream(socket.getOutputStream());
           out.writeUTF("hello 8088");
           out.flush();

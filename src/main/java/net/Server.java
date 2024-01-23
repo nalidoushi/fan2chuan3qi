@@ -25,6 +25,7 @@ public class Server {
             //接受客户端的连接
             Socket client = server.accept();//accept是一个阻塞式方法
             System.out.println("有客户端连接到服务器了");
+            //读客户端数据
             ObjectInputStream in=null;
             try
             {
