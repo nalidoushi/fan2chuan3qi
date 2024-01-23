@@ -38,10 +38,15 @@ public class SimpleChatServer {
                 //构建流对象读写数据
                 BufferedReader reader=
                 new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String line=reader.readLine();
-                System.out.println("来自客户端的数据:"+line);
+                String msg=null;
+                //可以不断的读取客户端写入到服务端的数据
+                while(true) {
+                    msg=reader.readLine();
+                    if("exit".equals(msg))break;
+                    System.out.println("来自客户端的数据:" + msg);
+                }
                 PrintWriter writer=new PrintWriter(socket.getOutputStream());
-                writer.println("hello client");
+                writer.println("bye bye");
                 writer.flush();
             }catch (IOException e){
                 e.printStackTrace();

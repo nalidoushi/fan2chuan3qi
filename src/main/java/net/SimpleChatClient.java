@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * 这个Socket客户端有个需求:
@@ -31,8 +32,14 @@ public class SimpleChatClient {
     public void start(){
         try {
             PrintWriter pw = new PrintWriter(socket.getOutputStream());
-            pw.println("hello server");
-            pw.flush();
+            Scanner scanner=new Scanner(System.in);
+            //不断从键盘输入数据,然后写入到服务端
+            while(true) {
+                String msg=scanner.nextLine();
+                pw.println(msg);
+                pw.flush();
+                if("exit".equals(msg))break;
+            }
             BufferedReader reader=
                     new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String content=reader.readLine();

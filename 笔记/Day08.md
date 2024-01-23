@@ -173,11 +173,16 @@ public class SimpleChatServer {
                 System.out.println("客户端来了");
                 //构建流对象读写数据
                 BufferedReader reader=
-                new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String line=reader.readLine();
-                System.out.println("来自客户端的数据:"+line);
+                        new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String msg=null;
+                //可以不断的读取客户端写入到服务端的数据
+                while(true) {
+                    msg=reader.readLine();
+                    if("exit".equals(msg))break;
+                    System.out.println("来自客户端的数据:" + msg);
+                }
                 PrintWriter writer=new PrintWriter(socket.getOutputStream());
-                writer.println("hello client");
+                writer.println("bye bye");
                 writer.flush();
             }catch (IOException e){
                 e.printStackTrace();
@@ -202,6 +207,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 /**
  * 这个Socket客户端有个需求:
@@ -228,8 +234,14 @@ public class SimpleChatClient {
     public void start(){
         try {
             PrintWriter pw = new PrintWriter(socket.getOutputStream());
-            pw.println("hello server");
-            pw.flush();
+            Scanner scanner=new Scanner(System.in);
+            //不断从键盘输入数据,然后写入到服务端
+            while(true) {
+                String msg=scanner.nextLine();
+                pw.println(msg);
+                pw.flush();
+                if("exit".equals(msg))break;
+            }
             BufferedReader reader=
                     new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String content=reader.readLine();
@@ -246,7 +258,30 @@ public class SimpleChatClient {
         client.start();
     }
 }
+
 ```
+# 总结(Summary)
+
+## 重难点分析
+
+* Socket是什么?(Java中的一组网络通讯API,用于实现网络通讯)
+* Socket常用API有哪些?(Socket,ServerSocket)
+* 基于Socket实现网络编程的基本步骤?(服务器,客户端,获取流对象,读写数据,释放资源)
+
+## FAQ分析
+
+* Java中实现网络通讯的API有哪些?(Socket,ServerSocket)
+* 网络中计算机的唯一标识是什么?(IP地址)
+* 计算机中应用程序的唯一标识是什么?(端口号)
+* 启动Server时是否要指定端口?(要,建议提供的端口要大于1024,小于65535)
+* ServerSocket中的accept方法作用什么?(等待客户端的连接,返回值是一个socket对象)
+* 网络通讯中如何读写网路中数据?(IO流)
+
+## Buf分析
+* 端口被占用
+* 连接已关闭
+
+
 
 
 
