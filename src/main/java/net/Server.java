@@ -33,16 +33,12 @@ public class Server {
                 Socket client = server.accept();//accept是一个阻塞式方法
                 System.out.println("有客户端连接到服务器了");
                 //获取与客户端进行数据交互的流对象,然后读客户端数据
-                ObjectInputStream in = null;
-                try {
-                    in = new ObjectInputStream(client.getInputStream());
-                    while(true) {
+                ObjectInputStream in=null;
+                in = new ObjectInputStream(client.getInputStream());
+                while(true) {
                         String content = in.readUTF();
                         if(content.equals("exit"))break;
                         System.out.println(content);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
