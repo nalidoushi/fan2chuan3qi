@@ -282,6 +282,10 @@ public class SimpleChatClient {
 * 端口被占用
 * 连接已关闭
 
+## 作业
+
+* 完成课上SimpleChatServer与SimpleChatClient程序的编写.
+
 
 
 
