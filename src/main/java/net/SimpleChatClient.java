@@ -44,7 +44,6 @@ public class SimpleChatClient {
             e.printStackTrace();
         }
     }
-
     public static void main(String[] args) {
         SimpleChatClient client=new SimpleChatClient();
         client.start();

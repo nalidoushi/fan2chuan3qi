@@ -130,6 +130,124 @@ public class SimpleClientPlus {
 }
 ```
 
+## 简易聊天程序实现
+
+* 服务端设计及实现
+```java
+package net;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * 在这个Server实现两个功能:
+ * 1.读取客户端写入到服务端的数据并输出
+ * 2.向客户端写数据
+ * 技术上的实现:
+ * 1.在SimpleChatServer的构造方法中构建ServerSocket对象
+ * 2.在SimpleChatServer类中定义start方法,在方法内部接收客户端的连接,然后读,写客户端数据
+ * 3.读写数据时要求使用BufferedReader,PrintWriter
+ * 4.所有方法内部都自己处理异常
+ */
+public class SimpleChatServer {
+    private ServerSocket server;
+    public SimpleChatServer(){
+        try {
+            server = new ServerSocket(9999);
+            System.out.println("Server Start OK!");
+        }catch (IOException e){
+            e.printStackTrace();//日志记录
+            throw new RuntimeException("服务器启动失败");
+        }
+    }
+    public void start(){
+        //这里的循环表示可以接收多个客户端的连接请求
+        while(true){
+            try {
+                //接收客户端连接
+                Socket socket = server.accept();
+                System.out.println("客户端来了");
+                //构建流对象读写数据
+                BufferedReader reader=
+                new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String line=reader.readLine();
+                System.out.println("来自客户端的数据:"+line);
+                PrintWriter writer=new PrintWriter(socket.getOutputStream());
+                writer.println("hello client");
+                writer.flush();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] args) {
+        SimpleChatServer server=new SimpleChatServer();
+        server.start();
+    }
+}
+
+```
+
+* 客户端设计及实现
+
+```java
+package net;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+/**
+ * 这个Socket客户端有个需求:
+ * 1.向服务端写数据
+ * 2.从服务端读数据
+ * 技术上的实现:
+ * 1.在SimpleChatClient的构造方法中构建Socket对象
+ * 2.在SimpleChatClient定义start方法,在方法内部写,读服务端数据
+ * 3.读写数据时要求使用BufferedReader,PrintWriter
+ * 4.所有方法内部都有自己处理异常
+ */
+public class SimpleChatClient {
+
+    private Socket socket;
+    public SimpleChatClient(){
+        try {
+            socket=new Socket("127.0.0.1",9999);
+            System.out.println("连接成功了");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("连接失败了");
+        }
+    }
+    public void start(){
+        try {
+            PrintWriter pw = new PrintWriter(socket.getOutputStream());
+            pw.println("hello server");
+            pw.flush();
+            BufferedReader reader=
+                    new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String content=reader.readLine();
+            System.out.println("来自服务端的数据:"+content);
+            pw.close();
+            reader.close();
+            socket.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public static void main(String[] args) {
+        SimpleChatClient client=new SimpleChatClient();
+        client.start();
+    }
+}
+```
+
 
 
 
