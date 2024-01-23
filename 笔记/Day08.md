@@ -243,7 +243,8 @@ public class SimpleChatClient {
                 if("exit".equals(msg))break;
             }
             BufferedReader reader=
-                    new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    new BufferedReader(
+                            new InputStreamReader(socket.getInputStream()));
             String content=reader.readLine();
             System.out.println("来自服务端的数据:"+content);
             pw.close();
