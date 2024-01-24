@@ -1,5 +1,12 @@
 package thread;
 
+/**
+ * 线程创建方式1:
+ * 写一个类继承Thread
+ * 重写其中的run方法,在其中写上线程要执行的代码
+ * 创建当前线程类的对象
+ * 调用其start()方法即可启动一个线程
+ */
 public class Demo01 {
     public static void main(String[] args) {
         MyThread01 t01 = new MyThread01("from 01..");
