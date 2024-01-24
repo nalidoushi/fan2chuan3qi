@@ -8,5 +8,15 @@ public class Demo01 {
         t02.start();
         MyThread02 t03 = new MyThread02();
         t03.start();
+        //匿名内部类方式,快速创建线程
+       new Thread(){
+            @Override
+            public void run() {
+                while (true){
+                    System.out.println("print from inner Thread..");
+                }
+            }
+        }.start();
+
     }
 }
