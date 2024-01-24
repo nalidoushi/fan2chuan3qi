@@ -1,8 +1,12 @@
 # 多线程
 
-## 进程 线程概念
+## 多线程基础
 
-### 进程
+### 概念
+
+![img](images/Day09/u=2153291410,63273918&fm=253&fmt=auto&app=138&f=JPEG.jpeg)
+
+#### 进程
 
 > 操作系统中一个运行着的程序就是一个进程
 >
@@ -12,7 +16,7 @@
 >
 > 由于CPU速度很快,切换的也很快，看起来就像在同时执行一样
 
-### 线程
+#### 线程
 
 > 一个进程里可以执行多个并行的过程,称之为线程
 >
@@ -22,11 +26,11 @@
 >
 > 由于CPU速度很快，切换的也和那快,看起来就像在同时执行一样
 
-## 线程创建方式
+### 线程创建方式
 
 ![创建线程的两种方式](images/线程/创建线程的两种方式.png)
 
-### 创建方式1：继承线程类方式
+#### 创建方式1：继承线程类方式
 
 > * 写一个类继承Thread
 > * 重写其中的run方法,在其中写上线程要执行的代码
@@ -81,7 +85,7 @@ public class Demo01 {
 }
 ```
 
-### 创建方式2：实现任务接口方式
+#### 创建方式2：实现任务接口方式
 
 > - 写一个类实现Runnable接口，实现run()方法，定义出任务类
 >
@@ -131,7 +135,7 @@ public class Demo02 {
 }
 ```
 
-## 线程之间的关系
+### 线程之间的关系
 
 > 程序从main方法启动时，本身就是启动了一个线程称之为主线程
 >
@@ -188,7 +192,9 @@ public class Demo03 {
 }
 ```
 
-## 线程API
+### 线程API
+
+#### 概念
 
 > 线程优先级：
 >
@@ -199,6 +205,8 @@ public class Demo03 {
 > 线程分为用户线程和守护线程，线程创建出来时都为用户线程，可以将用户线程配置为守护线程。
 >
 > 守护线程通常都是执行用户线程的辅助任务，当程序中剩余的都是守护线程时，程序会直接结束。
+
+#### 案例
 
 ![image-20240124112630669](images/线程/image-20240124112630669.png)
 
@@ -321,17 +329,120 @@ public class Demo04 {
 }
 ```
 
-## 案例：实现多线程聊天室
+### 案例
+
+#### 多线程聊天室
 
 > 一个服务器，同时接收多个客户端的连接，并与其通信
 >
 > 主线程负责接收连接，创建子线程负责和客户端在通信
 
+```java
+package thread;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ * 服务器
+ */
+
+class SocketRunnable implements Runnable{
+
+    private Socket socket;
+
+    public SocketRunnable(Socket socket) {
+        this.socket = socket;
+    }
+
+    @Override
+    public void run() {
+        try {
+            //1.获取输入流,转换为缓冲流
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            //2.循环读取数据打印,如果读到exit则退出
+            while(true){
+                String line = reader.readLine();
+                if("exit".equals(line))break;
+                String host = socket.getInetAddress().getHostAddress();
+                System.out.println("收到客户端["+host+"]发来的数据:"+line);
+            }
+            reader.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+public class SimpleChatServer {
+    public static void main(String[] args) {
+        try {
+            //1.创建ServerSocket
+            ServerSocket ss = new ServerSocket();
+            //2.绑定端口
+            ss.bind(new InetSocketAddress(9999));
+            while(true){
+                //3.接收客户端连接
+                Socket socket = ss.accept();
+                //4.创建线程,将socket交给线程来处理
+                new Thread(new SocketRunnable(socket)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+```
+
+```java
+package thread;
+
+import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class SimpleChatClient {
+    public static void main(String[] args) {
+        try {
+            //1.创建Socket
+            Socket socket = new Socket();
+            //2.连接服务器
+            socket.connect(new InetSocketAddress("127.0.0.1",9999));
+            System.out.println("连接服务器成功!");
+            //3.获取输出流,转换为打印流
+            PrintWriter printer = new PrintWriter(socket.getOutputStream());
+            //4.循环从控制台读取输入,发送给服务器
+            Scanner scanner = new Scanner(System.in);
+            while(true){
+                String line = scanner.nextLine();
+                printer.println(line);
+                printer.flush();
+                if("exit".equals(line))break;
+            }
+            //5.关闭资源
+            printer.close();
+            socket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
 ## 线程并发安全问题
 
 ### 概念
 
-多个线程并发访问同一个共享资源,由于线程抢夺cpu的随机特性,造成对共享资源的访问产生混乱,因此造成的问题称之为多线程并发安全问题
+> 多个线程并发访问同一个共享资源,由于线程抢夺cpu的随机特性,造成对共享资源的访问产生混乱,因此造成的问题称之为多线程并发安全问题
+
+### 案例
 
 ```java
 public class Demo05 {
@@ -401,25 +512,47 @@ public class Demo06 {
 }
 ```
 
-### 同步机制解决多线程安全问题
+### 同步机制
 
-### Syncronized代码块
+#### syncronized代码块
 
-#### 基本结构
+##### 基本结构
 
-```
+```java
 syncronized(锁对象){
   要执行的代码
 }
 ```
 
-#### 原理
+##### 原理
 
 > 线程想要进入同步代码块,必须在锁对象上加锁,而同一个锁对象同一时间内只能有一个线程加锁成功.
 >
-> 之后,线程走出Syncronized代码块时,释放锁,其它线程才能竞争到锁,进入Syncronized,操作共享资源.
+> 之后,线程走出syncronized代码块时,释放锁,其它线程才能竞争到锁,进入syncronized,操作共享资源.
 >
 > 此机制保证了同一时间内只能有一个线程操作共享资源,避免了多线程并发安全问题.
+
+##### 锁对象的选择
+
+> 任何对象都可以作为锁对象使用
+>
+> 锁对象必须是同一个对象,才能互斥
+>
+> 因此必须选择所有要互斥的线程都能看到的对象作为锁对象
+>
+> 常见的锁对象:
+>
+>    共享资源作为锁对象
+>
+>    this作为锁对象
+>
+>    类名.class作为锁对象
+>
+> 锁的抢夺是随机,并不保证顺序
+>
+> 加锁时尽量只加有风险的代码,其它代码尽量不要加进去,减少性能损耗
+
+##### 案例
 
 ```java
 public class Demo07 {
@@ -461,49 +594,35 @@ public class Demo07 {
 
 ```
 
-#### 注意事项
+> 
 
-> 任何对象都可以作为锁对象使用
->
-> 锁对象必须是同一个对象,才能互斥
->
-> 因此必须选择所有要互斥的线程都能看到的对象作为锁对象
->
-> 常见的锁对象:
->
->    共享资源作为锁对象
->
->    this作为锁对象
->
->    类名.class作为锁对象
->
-> 锁的抢夺是随机,并不保证顺序
->
-> 加锁时尽量只加有风险的代码,其它代码尽量不要加进去,减少性能损耗
+#### syncronized方法
 
-### Syncronized方法
+##### 基本结构
 
-#### 原理
+```
+public syncronize void mx(){
+  ...
+}
+```
+
+##### 原理
 
 > 如果整个方法都需要保证线程安全,则可以直接在方法上声明同步
 >
-> ```
-> public syncronize void mx(){
->   ...
-> }
-> ```
->
-> 则,任何线程想要进入这个方法,都需要先获取到锁,保证了线程安全
->
-> Syncronized方法的锁对象:
+> 此时,任何线程想要进入这个方法,都需要先获取到锁,保证了线程安全
+
+##### 默认锁对象
+
+> syncronized方法的锁对象:
 >
 > ​	如果是普通方法,则使用this作为锁对象
 >
 > ​    如果是静态方法,则使用当前类.class作为锁对象
 
-#### 案例
+##### 案例
 
-```
+```java
 class Bank{
     private int total = 20000;
     public synchronized boolean getMoney(int money){
