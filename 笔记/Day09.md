@@ -8,7 +8,9 @@
 >
 > 操作系统可以同时运行多个程序,即多个进程,称之为多进程
 >
-> 多个进程之间通过抢夺CPU执行时间进行并发执行,由于CPU速度很快,看起来就像在同时执行一样
+> 多个进程之间通过抢夺CPU执行时间进行并发执行
+>
+> 由于CPU速度很快,切换的也很快，看起来就像在同时执行一样
 
 ### 线程
 
@@ -16,7 +18,9 @@
 >
 > 一个进程里可以执行多个线程称之为多线程
 >
-> 多个线程之间通过抢夺CPU执行时间进行并发执行,由于CPU速度很快,看起来就像在同时执行一样
+> 多个线程之间通过抢夺CPU执行时间进行并发执行
+>
+> 由于CPU速度很快，切换的也和那快,看起来就像在同时执行一样
 
 ## 线程创建方式
 
@@ -135,7 +139,7 @@ public class Demo02 {
 >
 > 默认情况下，线程之间都是平等的，平等的抢夺cpu执行
 >
-> 只有程序中所有的线程都结束了，程序才会结束
+> 默认情况下，只有程序中所有的线程都结束了，程序才会结束
 
 ```Java
 package thread;
@@ -188,7 +192,7 @@ public class Demo03 {
 
 > 线程优先级：
 >
-> 线程的优先级决定了线程抢夺CPU的概率高低。优先级范围1-10，默认为5。
+> 线程的优先级决定了线程抢夺CPU的概率高低。优先级范围1-10，默认为5，数值越大权重越高。
 >
 > 守护线程：
 >
@@ -315,6 +319,222 @@ public class Demo04 {
     }
 
 }
+```
 
+## 案例：实现多线程聊天室
+
+> 一个服务器，同时接收多个客户端的连接，并与其通信
+>
+> 主线程负责接收连接，创建子线程负责和客户端在通信
+
+## 线程并发安全问题
+
+### 概念
+
+多个线程并发访问同一个共享资源,由于线程抢夺cpu的随机特性,造成对共享资源的访问产生混乱,因此造成的问题称之为多线程并发安全问题
+
+```java
+public class Demo05 {
+    private static String name = "小明";
+    private static String gender = "男";
+
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    if("小明".equals(name)){
+                        name = "小花";
+                        gender = "女";
+                    }else{
+                        name = "小明";
+                        gender = "男";
+                    }
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    System.out.println(name+"#"+gender);
+                }
+            }
+        }).start();
+    }
+}
+```
+
+```java
+class Bank{
+    private int total = 20000;
+    public boolean getMoney(int money){
+        if(money<=total){
+            total -= money;
+            System.out.println("取现金"+money+"元");
+            return true;
+        }
+        System.out.println("余额不足!");
+        return false;
+    }
+}
+
+public class Demo06 {
+    private static Bank bank = new Bank();
+    public static void main(String[] args) {
+        //小王
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                bank.getMoney(20000);
+            }
+        }).start();
+        //小李
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                bank.getMoney(20000);
+            }
+        }).start();
+    }
+}
+```
+
+### 同步机制解决多线程安全问题
+
+### Syncronized代码块
+
+#### 基本结构
+
+```
+syncronized(锁对象){
+  要执行的代码
+}
+```
+
+#### 原理
+
+> 线程想要进入同步代码块,必须在锁对象上加锁,而同一个锁对象同一时间内只能有一个线程加锁成功.
+>
+> 之后,线程走出Syncronized代码块时,释放锁,其它线程才能竞争到锁,进入Syncronized,操作共享资源.
+>
+> 此机制保证了同一时间内只能有一个线程操作共享资源,避免了多线程并发安全问题.
+
+```java
+public class Demo07 {
+    private static String name = "小明";
+    private static String gender = "男";
+
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    System.out.println("其它无关代码..");
+                    synchronized (Demo07.class){
+                        if("小明".equals(name)){
+                            name = "小花";
+                            gender = "女";
+                        }else{
+                            name = "小明";
+                            gender = "男";
+                        }
+                    }
+                    System.out.println("其它无关代码..");
+                }
+            }
+        }).start();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    synchronized (Demo07.class){
+                        System.out.println(name+"#"+gender);
+                    }
+                }
+            }
+        }).start();
+    }
+}
+
+```
+
+#### 注意事项
+
+> 任何对象都可以作为锁对象使用
+>
+> 锁对象必须是同一个对象,才能互斥
+>
+> 因此必须选择所有要互斥的线程都能看到的对象作为锁对象
+>
+> 常见的锁对象:
+>
+>    共享资源作为锁对象
+>
+>    this作为锁对象
+>
+>    类名.class作为锁对象
+>
+> 锁的抢夺是随机,并不保证顺序
+>
+> 加锁时尽量只加有风险的代码,其它代码尽量不要加进去,减少性能损耗
+
+### Syncronized方法
+
+#### 原理
+
+> 如果整个方法都需要保证线程安全,则可以直接在方法上声明同步
+>
+> ```
+> public syncronize void mx(){
+>   ...
+> }
+> ```
+>
+> 则,任何线程想要进入这个方法,都需要先获取到锁,保证了线程安全
+>
+> Syncronized方法的锁对象:
+>
+> ​	如果是普通方法,则使用this作为锁对象
+>
+> ​    如果是静态方法,则使用当前类.class作为锁对象
+
+#### 案例
+
+```
+class Bank{
+    private int total = 20000;
+    public synchronized boolean getMoney(int money){
+        if(money<=total){
+            total -= money;
+            System.out.println("取现金"+money+"元");
+            return true;
+        }
+        System.out.println("余额不足!");
+        return false;
+    }
+}
+
+public class Demo06 {
+    private static Bank bank = new Bank();
+    public static void main(String[] args) {
+        //小王
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                bank.getMoney(20000);
+            }
+        }).start();
+        //小李
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                bank.getMoney(20000);
+            }
+        }).start();
+    }
+}
 ```
 
