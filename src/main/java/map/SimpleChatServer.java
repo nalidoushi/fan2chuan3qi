@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ class SocketRunnable implements Runnable{
 
 public class SimpleChatServer {
     //定义一个集合用于保存所有客户端的输出流,用于实现消息广播
-    public static List<PrintWriter> allOut = new ArrayList<>();
+    public static List<PrintWriter> allOut = Collections.synchronizedList(new ArrayList<>());
 
     public static void main(String[] args) {
         try {
