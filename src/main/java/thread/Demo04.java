@@ -1,6 +1,6 @@
 package thread;
 
-import org.junit.Test;
+
 
 /**
  * 线程常用API：
