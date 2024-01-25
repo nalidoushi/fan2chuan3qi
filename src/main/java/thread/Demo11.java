@@ -1,5 +1,8 @@
 package thread;
 
+/**
+ * 一个线程等待多个线程
+ */
 public class Demo11 {
     static int i = 0;
     public static void main(String[] args) {

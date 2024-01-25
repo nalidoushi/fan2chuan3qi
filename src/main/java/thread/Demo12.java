@@ -1,5 +1,8 @@
 package thread;
 
+/**
+ * 多个线程达到一定状态后同时执行
+ */
 public class Demo12 {
     private static int count = 0;
     public static void main(String[] args) {
