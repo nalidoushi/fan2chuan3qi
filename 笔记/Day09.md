@@ -520,15 +520,19 @@ public class Demo06 {
 
 ```java
 syncronized(锁对象){
-  要执行的操作共享资源的代码
+  要执行同步在代码
 }
 ```
 
 ##### 原理
 
-> 线程想要进入同步代码块,必须在锁对象上加锁,而同一个锁对象同一时间内只能有一个线程加锁成功.
+> 线程想要进入同步代码块,必须在锁对象上加锁
 >
-> 之后,线程走出syncronized代码块时,释放锁,其它线程才有机会竞争到锁,进入syncronized,操作共享资源.
+> 而同一个锁对象同一时间内只能有一个线程加锁成功
+>
+> 线程走出syncronized代码块时,释放锁
+>
+> 其它线程才有机会竞争到锁,进入syncronized,操作共享资源
 >
 > 此机制保证了同一时间内只能有一个线程操作共享资源,避免了多线程并发安全问题.
 
@@ -601,7 +605,7 @@ public class Demo07 {
 ##### 基本结构
 
 ```java
-public syncronize void mx(){
+public syncronized void mx(){
   ...
 }
 ```
@@ -656,3 +660,300 @@ public class Demo06 {
     }
 }
 ```
+
+### 并发安全API
+
+#### API
+
+有一些类在开发中使用的非常频繁,在多线程的场景下,几乎无法避免产生潜在的多线程安全问题,如果都使用Syncronized来解决,则程序中到处都是同步锁,开发困难.
+
+为了解决这种问题,Java专门提供了一些并发安全的API,让我们不使用同步代码块也能保证这些API的线程安全.
+
+> StringBuilder - StringBuffer
+>
+> ArrayList - Collections.synchronizedList(list);
+>
+> LinkedList - Collections.synchronizedList(list);
+>
+> HashSet - Collections.synchronizedSet(set);
+>
+> HashMap - Collections.synchronizedMap(map);
+
+#### 案例
+
+```java
+public class Demo08 {
+    public static void main(String[] args) throws InterruptedException {
+        //StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for(int i=0;i<1000;i++){
+                        Thread.sleep(1);
+                        sb.append("abc");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for(int i=0;i<1000;i++){
+                        Thread.sleep(1);
+                        sb.append("def");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        Thread.sleep(5000);
+        System.out.println(sb.length());
+        System.out.println(sb);
+    }
+}
+```
+
+```java
+public class Demo09 {
+    public static void main(String[] args) throws InterruptedException {
+        List<Integer> lx = new ArrayList<>();
+        List<Integer> list = Collections.synchronizedList(lx);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for(int i=0;i<1000;i++){
+                        Thread.sleep(1);
+                        list.add(i);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    for(int i=0;i<1000;i++){
+                        Thread.sleep(1);
+                        list.add(i);
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        Thread.sleep(5000);
+        System.out.println(list.size());
+    }
+}
+```
+
+## 线程间的通信
+
+### 等待唤醒机制
+
+可以在Syncronized代码块中,在锁对象上使用如下方法控制线程的等待和唤醒
+
+> wait() - 让当前线程进入阻塞等待状态 - 线程挂起 不再抢夺CPU 并释放锁
+>
+> notify() - 随机唤醒一个当前在锁对象上阻塞等待的线程 - 线程结束挂起 恢复对CPU的抢夺 但仍然需要竞争到锁才可以继续执行
+>
+> notifyAll() -  唤醒所有在当前锁对象上阻塞等待的线程 - 线程结束挂起 恢复对CPU的抢夺 但仍然需要竞争到锁才可以继续执行
+
+### 入门案例
+
+```java
+public class Demo10 {
+    private static String name = "小明";
+    private static String gender = "男";
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        synchronized (Demo10.class) {
+                            if("小明".equals(name)){
+                                name = "小花";
+                                gender = "女";
+                            } else {
+                                name = "小明";
+                                gender = "男";
+                            }
+                            Demo10.class.notify();
+                            Demo10.class.wait();
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    synchronized (Demo10.class) {
+                        try {
+                            System.out.println(name+"#"+gender);
+                            Demo10.class.notify();
+                            Demo10.class.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+}
+```
+
+```java
+public class Demo11 {
+    static int i = 0;
+    public static void main(String[] args) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (Demo11.class) {
+                        Thread.sleep(2000);
+                        System.out.println("弟弟买米回来了..");
+                        i++;
+                        Demo11.class.notify();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (Demo11.class) {
+                        Thread.sleep(3000);
+                        System.out.println("姐姐买菜回来了..");
+                        i++;
+                        Demo11.class.notify();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (Demo11.class) {
+                        Thread.sleep(5000);
+                        System.out.println("爸爸买锅回来了..");
+                        i++;
+                        Demo11.class.notify();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        synchronized (Demo11.class){
+            try {
+               while(i<3){
+                    Demo11.class.wait();
+               }
+                System.out.println("妈妈开始做饭了~~~");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+```java
+public class Demo12 {
+    private static int count = 0;
+    public static void main(String[] args) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                    System.out.println("安琪拉加载完成..");
+                    synchronized (Demo12.class) {
+                        count++;
+                        if(count<3){
+                            Demo12.class.wait();
+                        }else{
+                            Demo12.class.notifyAll();
+                        }
+                        System.out.println("安琪拉开始游戏..");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);
+                    System.out.println("李白加载完成..");
+                    synchronized (Demo12.class) {
+                        count++;
+                        if(count<3){
+                            Demo12.class.wait();
+                        }else{
+                            Demo12.class.notifyAll();
+                        }
+                        System.out.println("李白开始游戏..");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    System.out.println("花木兰加载完成..");
+                    synchronized (Demo12.class) {
+                        count++;
+                        if(count<3){
+                            Demo12.class.wait();
+                        }else{
+                            Demo12.class.notifyAll();
+                        }
+                        System.out.println("花木兰开始游戏..");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+}
+```
+
+
+
+## 线程的生命周期
+
+![image-20240125112433261](images/Day09/image-20240125112433261.png)
