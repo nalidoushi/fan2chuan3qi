@@ -1,8 +1,10 @@
 package map2;
 
 import java.util.HashMap;
-import java.util.List;
 
+/**
+ * HashMap基础操作
+ */
 public class Demo01 {
     public static void main(String[] args) {
         //HashMap<String,Integer> map = new HashMap();
