@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 class ClientRunnable implements Runnable{
@@ -30,6 +32,9 @@ class ClientRunnable implements Runnable{
     }
 }
 
+/**
+ * 客户端
+ */
 public class SimpleChatClient {
     public static void main(String[] args) {
         try {

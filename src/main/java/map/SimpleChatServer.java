@@ -44,6 +44,7 @@ class SocketRunnable implements Runnable{
             }
             reader.close();
             printer.close();
+            SimpleChatServer.allOut.remove(printer);
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
