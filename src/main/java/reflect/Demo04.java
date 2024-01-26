@@ -3,6 +3,9 @@ package reflect;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * Method 方法类
+ */
 class Person4{
     private String name;
 
