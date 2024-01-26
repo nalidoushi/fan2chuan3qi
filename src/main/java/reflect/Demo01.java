@@ -9,6 +9,9 @@ class Person implements Eat,Run  {
 
 }
 
+/**
+ * Class类
+ */
 public class Demo01 {
     public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         //1.获取类的class
@@ -20,7 +23,7 @@ public class Demo01 {
         //--通过类名来获取
         Class clz3 = Class.forName("reflect.Person");
 
-        //2.常用方法
+        //2.Class类常用方法
         //--获取类名
         String name = clz1.getName();
         System.out.println(name);
@@ -41,6 +44,7 @@ public class Demo01 {
         System.out.println(clz1.isEnum());
         System.out.println(clz1.isArray());
         System.out.println(clz1.isAnnotation());
-
+        //--创建对象
+        Person px1 = clz1.newInstance();
     }
 }

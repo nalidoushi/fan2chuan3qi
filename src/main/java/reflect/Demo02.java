@@ -2,6 +2,10 @@ package reflect;
 
 import java.lang.reflect.Constructor;
 
+/**
+ * Constructor 构造器类
+ */
+
 class Person2{
     public Person2() {
         System.out.println("无参构造Person..");
@@ -17,7 +21,7 @@ class Person2{
 
 public class Demo02 {
     public static void main(String[] args) throws Exception{
-        //3.Class创建对象
+
         Class<Person2> clz = Person2.class;
 
         //快捷方式创建对象 - 使用无参构造
