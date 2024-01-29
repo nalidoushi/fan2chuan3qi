@@ -148,6 +148,248 @@ COLLATE collation_name #数据库默认校对规则
    CREATE DATABASE mydb3 character set utf8 collate utf8_bin;
    ```
 
-   ## 查询数据库
+### 查询数据库
+
+#### 语法
+
+1. 查看所有数据库
+
+   ```sql
+   show databases;
+   ```
+
+2. 查看数据库建库语句
+
+   ```sql
+   show create database db_name;
+   ```
+
+### 修改数据库
+
+#### 语法
+
+```sql
+ALTER DATABASE [IF NOT EXISTS] db_name [alter_specification [, alter_specification] ...]
+```
+
+**IF NOT EXISTS：**
+
+在修改前判断是否存在，如果存在则修改，如果不存在则不修改也不报错
+
+**alter_specification:**
+
+CHARACTER SET charset_name #修改数据库字符集编码集 
+
+COLLATE collation_name #修改数据库校对规则
+
+#### 练习
+
+1. 把mydb2库的字符集修改为utf8 
+
+   ```sql
+   alter database mydb2 character set utf8;
+   ```
+
+### 删除数据库
+
+#### 语法
+
+```sql
+DROP DATABASE [IF EXISTS] db_name
+```
+
+**IF EXISTS:** 
+
+在删除前判断是否存在，如果存在则删除，如果不存在则不删除也不报错
+
+#### 练习
+
+1. 删除前面创建的mydb1数据库 	
+
+   ```sql
+   drop database mydb1;
+   ```
+
+### 切换数据库
+
+#### 语法
+
+```sql
+use db_name;
+```
+
+### 创建表
+
+#### 语法
+
+```sql
+CREATE TABLE table_name(
+	field1 datatype [cons],
+	field2 datatype [cons],
+	field3 datatype [cons]
+)[character set 字符集] [collate 校对规则]
+field：指定列名
+datatype：指定列类型
+cons:约束条件
+```
+
+#### 案例
+
+1. 创建Employee表 
+
+   | 字段       | 属性     | 约束 |
+   | ---------- | -------- | ---- |
+   | id         | 整形     |      |
+   | name       | 字符型   |      |
+   | gender     | 字符型   |      |
+   | birthday   | 日期     |      |
+   | entry_date | 日期     |      |
+   | job        | 字符类型 |      |
+   | salary     | 浮点型   |      |
+   | resume     | 大文本   |      |
+
+   ```sql
+   create table employee(
+     id int,
+     name varchar(255),
+     gender char(1),
+     birthday date,
+     entry_date date,
+     job varchar(255),
+     salary double,
+     resume text
+   );
+   ```
 
    
+
+### 查看表
+
+#### 语法
+
+显示所有表
+
+```sql
+show tables;
+```
+
+查看表结构
+
+```sql
+desc tab_name;
+```
+
+查看建表语句
+
+```sql
+show create table tab_name;
+```
+
+### 删除表
+
+#### 语法
+
+```sql
+drop table tab_name;
+```
+
+#### 案例
+
+删除employee表
+
+```sql
+drop table employee;
+```
+
+### 修改表
+
+#### 增加列
+
+```sql
+ALTER TABLE tab_name ADD (column datatype [DEFAULT expr][, column datatype]...);
+```
+
+在上面员工表的基础上增加一个image列。
+
+```sql
+alter table employee add (image blob);
+```
+
+#### 修改列
+
+```sql
+ALTER TABLE tab_name MODIFY column datatype [DEFAULT expr][, column datatype]...;
+```
+
+修改job列，使其长度为60。
+
+```sql
+alter table employee modify column job varchar(60);
+```
+
+#### 删除列
+
+```sql
+ALTER TABLE tab_name DROP (column);
+```
+
+删除gender列
+
+```
+alter table employee drop gender;
+```
+
+#### 修改表名
+
+```sql
+ALTER TABLE old_tab_name RENAME TO new_tab_name;
+或
+RENAME TABLE old_tab_name TO new_tab_name;
+```
+
+表名改为user
+
+```
+alter table employee rename to user;
+
+rename table user to employee;
+```
+
+#### 修改列名
+
+```sql
+ALTER TABLE tab_name CHANGE [column] old_col_name new_col_name datatype;
+```
+
+列名name修改为username
+
+```sql
+alter table employee change column name username varchar(255);
+```
+
+#### 修改列的顺序
+
+```sql
+ALTER TABLE tab_name MODIFY col_name1 datatype AFTER col_name2;
+ALTER TABLE tab_name MODIFY col_name1 datatype FIRST;
+```
+
+将image插入到username列的后面
+
+```sql
+alter table employee modify image blob after username;
+```
+
+#### 修改表的字符集
+
+```sql
+ALTER TABLE tab_name CHARACTER SET character_name;
+```
+
+修改表的字符集为gbk
+
+```
+alter table employee character set gbk;
+alter table employee character set utf8;
+```
+
