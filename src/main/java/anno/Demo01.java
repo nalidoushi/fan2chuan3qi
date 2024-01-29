@@ -19,7 +19,7 @@ class Person{
         System.out.println("洗个手..吃饭..洗个脸..");
     }
 }
-class Teacher {
+class Teacher extends Person {
     @Override
     public void say(){
         System.out.println("一本正经的说..");
