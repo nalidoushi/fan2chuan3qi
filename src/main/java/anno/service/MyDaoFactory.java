@@ -15,12 +15,12 @@ public class MyDaoFactory {
     static{
         try {
             //获取anno/dao目录下所有的.java文件
-            //URL url = MyDaoFactory.class.getClassLoader().getResource("anno/dao");
-            File dir = new File("C:\\Users\\TEACHER\\IdeaProjects\\JSD2312SE\\src\\main\\java\\anno\\dao");
+            URL url = MyDaoFactory.class.getClassLoader().getResource("./anno/dao");
+            File dir = new File(url.toURI());
             File[] files = dir.listFiles();
             //遍历这些java文件
             for(File file : files){
-                if(file.isFile() && file.getName().endsWith(".java")){
+                if(file.isFile() && file.getName().endsWith(".class")){
                     //截取它们文件名,拼上报名,得到类的全路径名
                     String shortName = file.getName().split("\\.")[0];
                     String fullName = "anno.dao."+shortName;
