@@ -828,7 +828,8 @@ SELECT [DISTINCT] *|列名 FROM tab_name [WHERE where_definition]
 #### 语法
 
 ```sql
-SELECT [DISTINCT] *|列名 FROM tab_name ORDER BY column_name [ASC|DESC][,column_name [ASC|DESC]];
+SELECT [DISTINCT] *|列名 FROM tab_name 
+ORDER BY column_name [ASC|DESC][,column_name [ASC|DESC]];
 ```
 
 ORDER BY 指定排序的列
@@ -863,4 +864,82 @@ ASC 升序排序、DESC 降序排序，默认是ASC
    order by fen desc;
    ```
 
-   
+### 聚合函数
+
+| 函数    | 作用                         |
+| ------- | ---------------------------- |
+| count() | 为结果集中指定的列统计行数   |
+| sum()   | 为结果集中指定的列求和       |
+| avg()   | 为结果集中指定的列求平均值   |
+| max()   | 在结果集的指定列中寻找最大值 |
+| min()   | 在结果集的指定列中寻找最小值 |
+
+1. 统计一个班级共有多少学生？
+
+   ```sql
+   select count(*) from exam;
+   select count(name) from exam;
+   select count(1) from exam;
+   ```
+
+2. 统计数学成绩大于75的学生有多少个
+
+   ```sql
+   select count(1) from exam where math > 75;
+   ```
+
+3. 统计总分大于230的人数有多少？
+
+   ```sql
+   select count(1) from exam 
+   where ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0)>230;
+   ```
+
+4. 统计一个班级数学总成绩？
+
+   ```sql
+   select sum(math) from exam;
+   ```
+
+5. 统计一个班级数学、语文、英语各科的总成绩
+
+   ```sql
+   select sum(math),sum(chinese),sum(english) from exam;
+   ```
+
+6. 统计一个班级语文、英语、数学的成绩总和
+
+   ```sql
+   select sum(math) + sum(chinese)+sum(english) from exam;
+   ```
+
+7. 统计一个班级语文成绩平均分?
+
+   ```sql
+   select avg(chinese) from exam;
+   ```
+
+8. 求一个班级数学平均分？
+
+   ```sql
+   select avg(math) from exam;
+   ```
+
+9. 求一个班级总分平均分
+
+   ```sql
+   select 
+   avg(ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0)) as avgFen
+   from exam;
+   ```
+
+10. 求班级最高分和最低分
+
+    ```sql
+    select 
+    max(ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0)) as maxFen,
+    min(ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0)) as minFen
+    from exam;
+    ```
+
+    
