@@ -625,7 +625,7 @@ default v;
 | resume     | 大文本   |                  |
 
 ```sql
-create table employee2(
+create table employee22(
     id int primary key auto_increment,
     name varchar(255) unique, 
     gender char(1) not null,
@@ -732,16 +732,83 @@ DISTINCT可选，指显示结果时，是否剔除重复数据
 5. 统计每个学生的总分
 
    ```sql
-   select name,math+chinese+english from exam;
+   select name,ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0)
+   from exam;
    ```
 
 6. 使用别名表示学生总分
 
    ```sql
-   select name as 姓名,math+chinese+english as 总分 from exam;
-   select name 姓名,math+chinese+english 总分 from exam;
+   select 
+   name as 姓名,
+   ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0) as 总分 
+   from exam;
+   
+   select 
+   name 姓名,
+   ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0) 总分 
+   from exam;
+   ```
+
+### 条件查询
+
+#### 语法
+
+```sql
+SELECT [DISTINCT] *|列名 FROM tab_name [WHERE where_definition]
+```
+
+其中的where关键字用于声明过滤条件:
+
+![image-20240130115223551](images/sql/image-20240130115223551.png)
+
+#### 案例
+
+1. 查询姓名为关羽的学生成绩
+
+   ```sql
+   select name,math,chinese,english from exam where name='关羽';
+   ```
+
+2. 查询英语成绩大于90分的同学
+
+   ```sql
+   select name,english from exam where english>90;
+   ```
+
+3. 查询总分大于230分的所有同学
+
+   ```sql
+   select 
+   name,
+   ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0) as fen 
+   from exam 
+   where ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0)  > 230;
+   ```
+
+4. 查询语文分数在 80－100之间的同学
+
+   
+
+5. 查询数学分数为75,76,77的同学，再查询分数不在这个范围内的同学
+
+   ```sql
+   
+   ```
+
+6. 查询所有姓张的学生成绩
+
+   ```sql
+   
+   ```
+
+7. 查询数学分>70，语文分>80 且英语成绩为null的同学
+
+   ```sql
+   
    ```
 
    
 
-​		
+
+
