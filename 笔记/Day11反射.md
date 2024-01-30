@@ -14,13 +14,101 @@
 
 ## Class类
 
+1. 获取class
+
+   > 类名.class
+   >
+   > 对象.getClass()
+   >
+   > Class.forName("类的全路径名")
+
+2. 获取类名
+
+   > getName()
+   >
+   > getSimpleName()
+
+3. 获取父类
+
+   > getSupperclass()
+
+4. 获取包
+
+   > getPackage()
+
+5. 获取构造器
+
+   > getConstructor(Class ... paramTypes)
+   >
+   > getConstructors()
+
+6. 获取方法
+
+   > getMethods()
+   >
+   > getMethod(String name,Class ...paramTypes)
+
+7. 获取属性
+
+   > getFields()
+   >
+   > getField(String name)
+
+8. 创建实例
+
+   > newInstance()
+
+9. 获取类加载器
+
+   > getClassLoader()
+
 ## Package类
+
+1. 获取包名
+
+   > getName()
 
 ## Constructor类
 
+1. 创建对象
+
+   > newInstance(Object...initargs);
+
 ## Field类
 
+1. 获取属性名
+
+   > getName()
+
+2. 获取属性类型
+
+   > getType()
+
+3. 获取属性值
+
+   > get()
+
+4. 设置属性值
+
+   > set()
+
 ## Method类
+
+1. 获取方法名
+
+   > getName()
+
+2. 获取参数列表
+
+   > getParameterTypes()
+
+3. 获取返回值类型
+
+   > getReturnType()
+
+4. 执行方法
+
+   > invoke(Object obj,Object...args);
 
 ## 案例
 
