@@ -823,7 +823,44 @@ SELECT [DISTINCT] *|列名 FROM tab_name [WHERE where_definition]
    where math>70 and chinese>80 and english is not null;
    ```
 
+### 排序查询
+
+#### 语法
+
+```sql
+SELECT [DISTINCT] *|列名 FROM tab_name ORDER BY column_name [ASC|DESC][,column_name [ASC|DESC]];
+```
+
+ORDER BY 指定排序的列
+
+排序的列即可以是表中的列名，也可以是select 语句后指定的别名
+
+ASC 升序排序、DESC 降序排序，默认是ASC
+
+#### 案例
+
+1. 对英语成绩排序后输出
+
+   ```sql
+   select * from exam order by english desc;
+   ```
+
+2. 对总分排序按从高到低的顺序输出
+
+   ```sql
+   select 
+   name,ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0) as fen from exam 
+   order by fen desc;
+   ```
+
+3. 对姓张的学生成绩排序输出
+
+   ```sql
+   select
+   name,ifnull(math,0)+ifnull(chinese,0)+ifnull(english,0) as fen 
+   from exam 
+   where name like '张%'
+   order by fen desc;
+   ```
+
    
-
-
-
