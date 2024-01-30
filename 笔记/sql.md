@@ -4,11 +4,17 @@
 
 ### 数据库
 
-数据库，简而言之就是存储数据的仓库，可以按照一定的数据结构存储管理大量的数据及数据 与数据之间的关系，它本质上是一种信息管理系统。数据库根据存储采用的数据结构的不同可 以分为许多种，其中常见的有层次式数据库、网络式数据库、关系型数据库。其中关系型数据 库占据着市场的主流。
+数据库，简而言之就是存储数据的仓库，可以按照一定的数据结构存储管理大量的数据及数据 与数据之间的关系，它本质上是一种信息管理系统。
+
+数据库根据存储采用的数据结构的不同可 以分为许多种，其中常见的有层次式数据库、网络式数据库、关系型数据库。
+
+其中关系型数据 库占据着市场的主流。
 
 ### 关系型数据库
 
-关系型数据库是建立在关系模型基础上的数据库。这种定义听起来十分抽象，这里我们不深入 讨论什么叫做“关系模型”--大学计算机专业专门有一门课叫“离散数学”专门讨论过关系模 型，只是简单的表述为 利用表来存储数据，用表和表之间的关系保存数据之间的关系的数据库 称为关系型数据库，这个定义不太严谨，但是更好理解。
+关系型数据库是建立在关系模型基础上的数据库。
+
+这种定义听起来十分抽象，这里我们不深入 讨论什么叫做“关系模型”--大学计算机专业专门有一门课叫“离散数学”专门讨论过关系模 型，只是简单的表述为 利用表来存储数据，用表和表之间的关系保存数据之间的关系的数据库 称为关系型数据库，这个定义不太严谨，但是更好理解。
 
 ### 常见关系型数据库
 
@@ -261,7 +267,6 @@ cons:约束条件
    );
    ```
 
-   
 
 ### 查看表
 
@@ -295,11 +300,11 @@ drop table tab_name;
 
 #### 案例
 
-删除employee表
+1. 删除employee表
 
-```sql
-drop table employee;
-```
+   ```sql
+   drop table employee;
+   ```
 
 ### 修改表
 
@@ -391,5 +396,271 @@ ALTER TABLE tab_name CHARACTER SET character_name;
 ```
 alter table employee character set gbk;
 alter table employee character set utf8;
+```
+
+## DML
+
+Data Manipulation Language 数据库操作语言
+
+用于改变数据库表中的数据
+
+包括:
+
+INSERT UPDATE DELETE
+
+### 准备数据
+
+```sql
+create table employee(
+  id int,
+  name varchar(255),
+  gender char(1),
+  birthday date,
+  entry_date date,
+  job varchar(255),
+  salary double,
+  resume text
+);
+```
+
+
+
+### 新增数据
+
+#### 语法
+
+```sql
+INSERT INTO tab_name [(column [, column...])] VALUES (value [, value...]);
+```
+
+注意:
+
+在values后声明的值必须和values前声明的列相匹配 
+
+可以省略列的声明，则值按照表中列的顺序来指定值
+
+插入的数据应与对应字段的数据类型相匹配
+
+数据的大小应在列的规定范围内 
+
+字符串和日期格式的数据要用单引号引起来 
+
+不想给值的列，可以赋值为null
+
+#### 案例
+
+1.  向员工表中插入三条数据
+
+   ```sql
+   insert into employee (id,name,gender,birthday,entry_date,job,salary,resume) 
+   values 
+   (1,'刘备','m','2000-10-10','2020-11-11','卖鞋',998.00,'鞋编的好~');
+   
+   insert into employee 
+   (id,gender,name,salary,job,resume) 
+   values 
+   (2,'f','关羽',888.00,'耍大刀','看家护院好管家~~');
+   
+   insert into employee values (3,'张飞','m','2003-03-03','2003-05-05','杀猪的',1000.00,null);
+   
+   insert into employee values 
+   (4,'刘备2','m','2000-10-10','2020-11-11','卖鞋',998.00,'鞋编的好~'),
+   (5,'刘备3','m','2000-10-10','2020-11-11','卖鞋',998.00,'鞋编的好~'),
+   (6,'刘备4','m','2000-10-10','2020-11-11','卖鞋',998.00,'鞋编的好~');
+   ```
+
+### 修改数据
+
+#### 语法
+
+```sql
+UPDATE tab_name SET col_name1=expr1 [, col_name2=expr2 ...] [WHERE where_definition]
+```
+
+UPDATE语法可以实现对表记录的修改
+
+SET子句指定要修改哪些列，要给予哪些值
+
+WHERE子句指定修改符合什么条件的表记录中
+
+如没有WHERE子句，则修改所有的行
+
+#### 案例
+
+1. 将所有员工薪水修改为5000元
+
+   ```sql
+   update employee set salary=5000;
+   ```
+
+2. 将姓名为‘张飞’的员工薪水修改为3000元
+
+   ```sql
+   update employee set salary=3000 where name='张飞';
+   ```
+
+3. 将姓名为‘关羽’的员工薪水修改为4000元,job改为"看大院"
+
+   ```sql
+   update employee set salary=4000,job='看大院' where name='关羽';
+   ```
+
+4. 将刘备的薪水在原有基础上增加1000元。
+
+   ```sql
+   update employee set salary=salary+1000 where name='刘备';
+   ```
+
+### 删除数据
+
+#### 语法
+
+```sql
+DELETE FROM tab_name [WHERE where_definition]
+```
+
+where用来指定要删除符合那些条件的表记录 
+
+如果不使用where子句，将删除表中所有数据 
+
+delete语句不能删除某一列的值（可使用update） 
+
+delete语句仅删除记录，不删除表本身
+
+如要删除表，使用drop table语句
+
+也可以使用truncate来“清除数据”，本质上是摧毁后重建表，相对于delete效率更高，但只能删除整表数据，无法操作单条数据
+
+#### 案例
+
+1. 删除表中名称为’张飞’的记录
+
+   ```sql
+   delete from employee where name = '张飞';
+   ```
+
+2. 删除表中所有记录
+
+   ```sql
+   delete from employee;
+   ```
+
+3. 使用truncate删除表中记录
+
+   ```sql
+   truncate employee;
+   ```
+
+## 约束
+
+> 数据库中可以为字段设定额外的限定条件，要求必须符合这些条件的数据才可以被存入。
+>
+> 这些额外的限定条件就称之为约束。
+
+### 主键约束
+
+通常每张表都会有一个字段或多个字段联合起来唯一标识表记录
+
+这样的字段称为这张表的主 键字段。
+
+基于它的作用，主键必然不可为空且不可重复。
+
+数据库中可以为主键字段声明主键约束，一旦声明过后，数据库会帮我们维护该字段的值，非空且唯一。
+
+如果主键字段为int类型，则可以在声明主键约束时，声明auto_increment,则该主键将具有自增特性。
+
+```sql
+primary key [auto_increment]
+```
+
+### 非空约束
+
+如果希望某个字段的值不可以为空，则可以声明非空约束
+
+```sql
+not null
+```
+
+### 唯一约束
+
+如果希望某个字段的值不可以重复，则可以声明唯一约束
+
+```sql
+unique
+```
+
+### 检查约束
+
+如果希望自己指定约束条件，可以使用检查约束
+
+```sql
+check (检查的条件)
+```
+
+### 默认约束
+
+默认情况下，字段的默认值NULL，可以通过设置默认约束指定字段的默认值
+
+```sql
+default v;
+```
+
+### 外键约束
+
+多表设计相关的约束，后续讲解。
+
+### 案例
+
+创建employee2表
+
+| 字段       | 属性     | 约束             |
+| ---------- | -------- | ---------------- |
+| id         | 整形     | 主键自增         |
+| name       | 字符型   | 唯一             |
+| gender     | 字符型   | 非空             |
+| birthday   | 日期     |                  |
+| entry_date | 日期     | 必须大于出生日期 |
+| job        | 字符类型 | 默认值为'未知'   |
+| salary     | 浮点型   |                  |
+| resume     | 大文本   |                  |
+
+```sql
+create table employee2(
+    id int primary key auto_increment,
+    name varchar(255) unique, 
+    gender char(1) not null,
+    birthday date ,
+    entry_date date check(entry_date>birthday),
+    job varchar(255) default '未知',
+    salary double,
+    resume text
+);
+insert into employee2 values 
+(null,'刘备','m','2000-03-03','2021-04-04','卖鞋',999.99,'鞋子不错~');
+
+#insert into employee2 values 
+#(null,'刘备','m','2000-03-03','2021-04-04','卖鞋',999.99,'鞋子不错~');
+
+#insert into employee2 values 
+#(3,'关羽',null,'2002-03-03','2023-04-04','卖鞋',999.99,'鞋子不错~');
+
+#insert into employee2 values 
+#(3,'关羽','f','2002-03-03','2001-04-04','刷刀',999.99,'看家护院~');
+
+insert into employee2 values 
+(3,'关羽','f','2002-03-03','2003-04-04','刷刀',999.99,'看家护院~');
+
+insert into employee2 values 
+(null,'张飞','m','2005-05-05','2006-06-06','杀猪',999.99,'杀猪小能手~');
+
+insert into employee2 
+(id,name,gender,birthday,entry_date,job,salary,resume)
+values 
+(null,'赵云','m','2007-05-05','2008-06-06',null,500.00,'老大的贴身保镖');
+
+insert into employee2 
+(id,name,gender,birthday,entry_date,salary,resume)
+values 
+(null,'赵云2','m','2007-05-05','2008-06-06',500.00,'老大的贴身保镖');
 ```
 
