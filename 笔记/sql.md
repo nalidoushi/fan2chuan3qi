@@ -664,3 +664,23 @@ values
 (null,'赵云2','m','2007-05-05','2008-06-06',500.00,'老大的贴身保镖');
 ```
 
+## DQL
+
+DQL用于查询表中的记录
+
+### 准备数据
+
+```sql
+create table exam(
+	id int primary key auto_increment,
+    name varchar(20) not null,
+    chinese double,
+    math double,
+    english double
+);
+insert into exam values (null,'关羽',85,76,70);
+insert into exam values (null,'张飞',70,75,70);
+insert into exam values (null,'赵云',90,65,95);
+insert into exam values (null,'张三丰',82,79,null);
+```
+
