@@ -696,6 +696,15 @@ insert into orders(id,product,price) values(2,'洗衣机',100);
 insert into orders(id,product,price) values(3,'洗衣粉',90);
 insert into orders(id,product,price) values(4,'桔子',9);
 insert into orders(id,product,price) values(5,'洗衣粉',90);
+
+create table user (id int,name varchar(20),age int);
+insert into user values (1,'aaa',19);
+insert into user values (2,'bbb',23);
+insert into user values (3,'ccc',32);
+insert into user values (4,'ddd',18);
+insert into user values (5,'eee',22);
+insert into user values (6,'fff',27);
+insert into user values (7,'ggg',39);
 ```
 
 ### 基础查询
@@ -1011,4 +1020,114 @@ where中不能出现聚合函数,having中可以使用聚合函数
    having sum(price) > 100;
    ```
 
+### 分页查询
+
+#### 语法
+
+```sql
+SELECT [DISTINCT] *|列名 FROM tab_name LIMIT n,m;
+```
+
+#### 案例
+
+1. 从user表中，按照每次3条取数据
+
+   ```sql
+   select * from user limit 0,3;
+   select * from user limit 3,3;
+   select * from user limit 6,3;
+   ```
+
+2. 从user表中查询年龄最小的3个用户
+
+   ```sql
+   select * from user order by age limit 0,3;
+   ```
+
+### SQL查询编写技巧1
+
+#### sql语句关键词的书写顺序
+
+> select from where group by having order by limit
+
+#### sql语句关键词的执行顺序
+
+> from where group by having select order by limit
+
+![img](images/Day13_Day16sql/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3Rlc3Rlcl9ydW5pbmc=,size_16,color_FFFFFF,t_70.png)
+
+### SQL查询综合练习1
+
+#### 准备数据
+
+```
+create database mydb4;
+use mydb4;
+create table user (id int, name varchar(20),age int, addr varchar(20));
+insert into user values (1,'aa',19,'bj');
+insert into user values (2,'bb',23,'sh');
+insert into user values (3,'cc',26,'gz');
+insert into user values (4,'dd',24,'bj');
+insert into user values (5,'ee',31,'sz');
+insert into user values (6,'ff',27,'sh');
+insert into user values (7,'gg',26,'bj');
+create table dept (id int ,name varchar(20));
+insert into dept values (999,'行政部');
+insert into dept values (888,'财务部');
+insert into dept values (777,'销售部');
+insert into dept values (666,'科技部');
+create table emp (id int,name varchar(20),did int);
+insert into emp values (1,'萨达姆',999);
+insert into emp values (2,'哈利波特',888);
+insert into emp values (3,'孙悟空',777);
+insert into emp values (4,'朴乾',777);
+insert into emp values (5,'本拉登',555);
+create table emp2( id int, name varchar(20), salary int, did int, job varchar(20) );
+insert into emp2 values (1,'aaa',3200,999,'it');
+insert into emp2 values (2,'bbb',4500,888,'it');
+insert into emp2 values (3,'ccc',7300,999,'saler');
+insert into emp2 values (4,'ddd',3000,999,'saler');
+insert into emp2 values (5,'eee',2800,777,'hr');
+insert into emp2 values (6,'fff',5100,777,'it');
+insert into emp2 values (7,'ggg',9100,777,'it');
+insert into emp2 values (8,'hhh',9900,666,'saler');
+```
+
+#### 案例
+
+1. 查询年龄大于20岁的用户
+
+   ```sql
    
+   ```
+
+2. 查询年龄在20-30岁的北京用户
+
+   ```sql
+   
+   ```
+
+3. 将20-30岁的用户按地区分组求平均年龄，求这些平均年龄大于25的地区名称。
+
+   ```sql
+   
+   ```
+
+4. 按年龄排序所有用户
+
+   ```sql
+   
+   ```
+
+5. 查询年龄大于20，年龄由小到大的前3为用户
+
+   ```sql
+   
+   ```
+
+   
+
+​		
+
+
+
