@@ -684,3 +684,64 @@ insert into exam values (null,'赵云',90,65,95);
 insert into exam values (null,'张三丰',82,79,null);
 ```
 
+### 基础查询
+
+#### 语法
+
+```sql
+SELECT [DISTINCT] *|{column1, column2. column3..} FROM tab_name;
+```
+
+select 指定查询哪些列的数据
+
+column指定列名
+
+*号代表查询所有列
+
+from指定查询哪张表
+
+DISTINCT可选，指显示结果时，是否剔除重复数据
+
+#### 练习
+
+1. 查询表中所有学生的信息
+
+   ```sql
+   select id,name,chiese,math,english from exam;
+   select * from exam;
+   ```
+
+2. 查询表中所有学生的姓名和对应的英语成绩
+
+   ```sql
+   select name,english from exam;
+   ```
+
+3. 查询所有英语成绩并过滤重复数据
+
+   ```sql
+   select distinct english from exam;
+   ```
+
+4. 在所有学生分数上加10分特长分显示
+
+   ```sql
+   select name,math+10,chinese+10,english+10 from exam;
+   ```
+
+5. 统计每个学生的总分
+
+   ```sql
+   select name,math+chinese+english from exam;
+   ```
+
+6. 使用别名表示学生总分
+
+   ```sql
+   select name as 姓名,math+chinese+english as 总分 from exam;
+   select name 姓名,math+chinese+english 总分 from exam;
+   ```
+
+   
+
+​		
