@@ -529,7 +529,9 @@ delete语句仅删除记录，不删除表本身
 
 如要删除表，使用drop table语句
 
-也可以使用truncate来“清除数据”，本质上是摧毁后重建表，相对于delete效率更高，但只能删除整表数据，无法操作单条数据
+也可以使用truncate来“清除数据”，本质上是摧毁后重建表
+
+truncate相对于delete效率更高，但只能删除整表数据，无法操作单条数据
 
 #### 案例
 
@@ -561,7 +563,7 @@ delete语句仅删除记录，不删除表本身
 
 通常每张表都会有一个字段或多个字段联合起来唯一标识表记录
 
-这样的字段称为这张表的主 键字段。
+这样的字段称为这张表的主键字段。
 
 基于它的作用，主键必然不可为空且不可重复。
 
@@ -788,24 +790,37 @@ SELECT [DISTINCT] *|列名 FROM tab_name [WHERE where_definition]
 
 4. 查询语文分数在 80－100之间的同学
 
+   ```sql
+   select name,chinese from exam where chinese>80 and chinese<100;
    
+   select name,chinese from exam where chinese between 80 and 100;
+   ```
 
 5. 查询数学分数为75,76,77的同学，再查询分数不在这个范围内的同学
 
    ```sql
+   select name,math from exam where math=75 or math=76 or math=77;
+   select name,math from exam where math!=75 and math!=76 and math!=77;
    
+   select name,math from exam where math in (75,76,77);
+   select name,math from exam where math not in (75,76,77);
    ```
 
 6. 查询所有姓张的学生成绩
 
    ```sql
-   
+   select * from exam where name like '张%';
+   select * from exam where name like '张__';
    ```
 
 7. 查询数学分>70，语文分>80 且英语成绩为null的同学
 
    ```sql
+   select * from exam 
+   where math>70 and chinese>80 and english is null;
    
+   select * from exam 
+   where math>70 and chinese>80 and english is not null;
    ```
 
    
