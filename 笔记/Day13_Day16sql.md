@@ -684,6 +684,18 @@ insert into exam values (null,'关羽',85,76,70);
 insert into exam values (null,'张飞',70,75,70);
 insert into exam values (null,'赵云',90,65,95);
 insert into exam values (null,'张三丰',82,79,null);
+
+
+create table orders(
+id int,
+product varchar(20),
+price float
+);
+insert into orders(id,product,price) values(1,'电视',900);
+insert into orders(id,product,price) values(2,'洗衣机',100);
+insert into orders(id,product,price) values(3,'洗衣粉',90);
+insert into orders(id,product,price) values(4,'桔子',9);
+insert into orders(id,product,price) values(5,'洗衣粉',90);
 ```
 
 ### 基础查询
@@ -866,6 +878,8 @@ ASC 升序排序、DESC 降序排序，默认是ASC
 
 ### 聚合函数
 
+#### 语法
+
 | 函数    | 作用                         |
 | ------- | ---------------------------- |
 | count() | 为结果集中指定的列统计行数   |
@@ -873,6 +887,8 @@ ASC 升序排序、DESC 降序排序，默认是ASC
 | avg()   | 为结果集中指定的列求平均值   |
 | max()   | 在结果集的指定列中寻找最大值 |
 | min()   | 在结果集的指定列中寻找最小值 |
+
+#### 案例
 
 1. 统计一个班级共有多少学生？
 
@@ -942,4 +958,57 @@ ASC 升序排序、DESC 降序排序，默认是ASC
     from exam;
     ```
 
-    
+### 分组查询
+
+#### 语法
+
+```sql
+SELECT [DISTINCT] *|列名 FROM tab_name 
+GROUP BY column[,comumn..] [HAVING ...]
+```
+
+分组操作可以按照指定的一个或多个列的值将数据进行分组
+
+同一个组内的多条数据会"叠"在一起,只显示一条
+
+其他的数据没有消失只是"压"在这条数据之下看不到 
+
+如果没有分组操作，聚合函数作用于整个查询结果 
+
+如果有分组操作，聚合函数作用于每个组的内部 
+
+where和having都可以用来过滤数据 
+
+where是分组之前过滤，having是分组之后的过滤
+
+where中不能出现聚合函数,having中可以使用聚合函数
+
+没有分组时，可以认为having等价于where
+
+因为：没有分组时，having会将查询结果的每一行认成一个组，所有的过滤在组内进行时，起始就是对查询结果的每一行的过滤，因此，效果上等价于where
+
+#### 案例
+
+1. 对订单表中商品归类后，显示每一类商品的总金额
+
+   ```sql
+   select product,sum(price) from orders group by product;
+   ```
+
+2. 查询总金额大于100的商品的名称和总金额
+
+   ```sql
+   select product,sum(price)  from orders 
+   group by product having sum(price)>100;
+   ```
+
+3. 查询单价小于100而总金额大于100的商品的名称.
+
+   ```sql
+   select product,sum(price) from orders 
+   where price<100 
+   group by product
+   having sum(price) > 100;
+   ```
+
+   
