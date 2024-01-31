@@ -1514,7 +1514,23 @@ insert into order_prod values (789,77,2);
 insert into order_prod values (999,77,3);
 ```
 
+1. 查询所有商品销量榜前两名,要求结果集中包含 商品id、销售总量
 
+   ```sql
+   select pid,sum(num) as sn 
+   from order_prod
+   group by pid 
+   order by sn desc 
+   limit 0,2;
+   ```
+
+2. 查询销量最大的商品的名称
+
+   ```sql
+   朴乾  15501020390
+   ```
+
+   
 
 ### SQL查询综合练习3
 
