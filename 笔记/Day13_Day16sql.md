@@ -1077,14 +1077,16 @@ SELECT [DISTINCT] *|列名 FROM tab_name LIMIT n,m;
 #### 准备数据
 
 ```sql
-create table user2 (id int, name varchar(20),age int, addr varchar(20));
-insert into user2 values (1,'aa',19,'bj');
-insert into user2 values (2,'bb',23,'sh');
-insert into user2 values (3,'cc',26,'gz');
-insert into user2 values (4,'dd',24,'bj');
-insert into user2 values (5,'ee',31,'sz');
-insert into user2 values (6,'ff',27,'sh');
-insert into user2 values (7,'gg',26,'bj');
+create database exec1;
+use exec1;
+create table user (id int, name varchar(20),age int, addr varchar(20));
+insert into user values (1,'aa',19,'bj');
+insert into user values (2,'bb',23,'sh');
+insert into user values (3,'cc',26,'gz');
+insert into user values (4,'dd',24,'bj');
+insert into user values (5,'ee',31,'sz');
+insert into user values (6,'ff',27,'sh');
+insert into user values (7,'gg',26,'bj');
 ```
 
 #### 案例
@@ -1220,7 +1222,7 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
 
 如果遇到子查询需求，先考虑使用非关联子查询，非关联子查询处理不了的再考虑关联子查询。
 
-非关联子查询，先写主查寻，遇到需要进一步获取的内容时，先空着，写好主查寻的结构后，再写查询，将子查询用作一个值、列、表应用在主查寻的空出来的位置中。
+非关联子查询，先写主查寻，遇到需要进一步获取的内容时，先空着，写好主查寻的结构后，再写子查询，将子查询的结果用作一个值、列、表应用在主查寻的空出来的位置中。
 
 关联子查询，先写主查寻，再将主查寻的结果理解为一张表，再编写子查询的语句，对主查寻中的每条数据进行过滤。
 
@@ -1353,3 +1355,208 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
 ![image-20240131115047954](images/Day13_Day16sql/image-20240131115047954.png)
 
 #### 多表查询
+
+关系型数据库通过表来存储数据，通过表和表之间的关系存储数据之间的关系。 
+
+表和表之间通过外键字段维系关系。 
+
+此时，查询操作可能会跨着多张表进行，即多表查询。
+
+##### 准备数据
+
+```sql
+create table dept3(
+    id int primary key auto_increment,
+	name varchar(20)
+);
+insert into dept3 values (null,'财务部');
+insert into dept3 values (null,'人事部');
+insert into dept3 values (null,'科技部');
+insert into dept3 values (null,'销售部');
+
+create table emp3(
+    id int primary key auto_increment,
+	name varchar(20),
+	did int
+);
+insert into emp3 values (null,'刘备',1);
+insert into emp3 values (null,'关羽',2);
+insert into emp3 values (null,'张飞',3);
+insert into emp3 values (null,'赵云',5);
+```
+
+##### 笛卡尔积查询
+
+尝试直接查询两张表
+
+```sql
+select * from dept3,emp3;
+```
+
+得到的是两张表的相乘的结果，称之为笛卡尔积查询。
+
+如果左边表有m条数据，右边表有n条数据,则得到m*n条数据。
+
+笛卡尔积查询没有考虑两张表中数据的对应关系,所以得到的结果中包含着大量错误的数据,通常无法直接使用。
+
+虽然通常无法直接使用,但笛卡尔积查询是其他查询方式的基础,需要了解。
+
+<img src="images/Day13_Day16sql/image-20240131141644609.png" alt="image-20240131141644609" style="zoom:40%;" />
+
+##### 内连接查询
+
+在笛卡尔积查询的基础上,基于外键字段筛选出正确的数据
+
+```sql
+select * from dept3,emp3 where emp3.did = dept3.id;
+```
+
+<img src="images/Day13_Day16sql/image-20240131142345312.png" alt="image-20240131142345312" style="zoom:80%;" />
+
+这样的查询被称为内连接查询
+
+内连接查询也可以通过专用的语法来实现
+
+```sql
+select * from dept3 inner join emp3 on emp3.did = dept3.id;
+```
+
+<img src="images/Day13_Day16sql/image-20240131142535914.png" alt="image-20240131142535914" style="zoom:80%;" />
+
+内连接查询只能查找到两张表中都有对应数据的记录。
+
+对于左边表有而右边表没有 和 右边表有而左边表没有的记录 都不会被查询出来。
+
+##### 外连接查询
+
+###### 左外连接查询
+
+在内连接的基础上,增加左边表有而右边表没有的数据
+
+```sql
+select * from dept3 left join emp3 on emp3.did = dept3.id;
+```
+
+![image-20240131143152568](images/Day13_Day16sql/image-20240131143152568.png)
+
+###### 右外连接查询
+
+在内连接的基础上,增加右边表有而左边表没有的数据
+
+```sql
+select * from dept3 right join emp3 on emp3.did = dept3.id;
+```
+
+![image-20240131143330700](images/Day13_Day16sql/image-20240131143330700.png)
+
+###### 全外连接查询
+
+在内连接的基础上,增加左边表有而右边表没有的数据  和  右边表有而左边表没有的数据
+
+```sql
+select * from dept3 full join emp3 on emp3.did = dept3.id;
+```
+
+注意，mysql不支持全外连接！以上语句无法在mysql中执行。
+
+可以通过union操作，合并左外连接和右外连接，模拟得到全外连接的结果。
+
+```sql
+select * from dept3 left join emp3 on emp3.did = dept3.id
+union
+select * from dept3 right join emp3 on emp3.did = dept3.id;
+```
+
+![image-20240131144000465](images/Day13_Day16sql/image-20240131144000465.png)
+
+### SQL查询编写技巧3
+
+#### 多表查询的处理
+
+先关联两张表，再将关联结果理解为一张虚拟的表，去关联第三张表
+
+关联时,根据是如何处理单边数据选择不同的关联方式
+
+如此，依次关联所有的表
+
+最终将所有关联在一起的表理解为一张表正常写sql即可
+
+当多个关联表中存在重名的列,引用要通过表名.列名来明确指定引用的是哪个列
+
+### SQL查询综合练习2
+
+#### 准备数据
+
+```sql
+create database exec2;
+use exec2;
+
+create table user (id int,name varchar(20));
+insert into user values(1,'aaa');
+insert into user values(2,'bbb');
+		
+create table orders (id int ,money double,uid int);
+insert into orders values (123,13.0,1);
+insert into orders values (789,17.0,1);
+insert into orders values (999,13.5,2);
+		
+create table prod(id int,name varchar(20),price double);
+insert into prod values (99,'大大泡泡糖',5.0);
+insert into prod values (88,'可口可乐',3.0);
+insert into prod values (77,'统一冰红茶',4.5);
+		
+create table order_prod(oid int,pid int,num int);
+insert into order_prod values (123,99,2);
+insert into order_prod values (123,88,1);
+insert into order_prod values (789,99,1);
+insert into order_prod values (789,88,1);
+insert into order_prod values (789,77,2);
+insert into order_prod values (999,77,3);
+```
+
+
+
+### SQL查询综合练习3
+
+#### 准备数据
+
+```sql
+create database exec3;			-- 创建db10数据库
+use exec3;						-- 切换到db10数据库
+create table dept(				-- 创建部门表
+	deptno int primary key,		-- 部门编号
+	deptname varchar(50),		-- 部门名称
+	loc varchar(50)				-- 部门位置
+);
+INSERT INTO `dept` VALUES ('10', '会计部', '北京');
+INSERT INTO `dept` VALUES ('20', '调查部', '杭州');
+INSERT INTO `dept` VALUES ('30', '销售部', '上海');
+INSERT INTO `dept` VALUES ('40', '营销部', '深圳');
+
+create table emp(				-- 创建员工表
+	empno int primary key,		-- 员工编号
+	empname varchar(50),		-- 员工姓名
+	job varchar(50),			-- 职位
+	mgr int,					-- 直属上级
+	hiredate date,				-- 受雇日期
+	sal int,					-- 薪资
+	comm int,					-- 奖金
+	deptno int,					-- 所在部门编号
+	foreign key(deptno) references dept(deptno)
+);
+INSERT INTO `emp` VALUES ('7369', '张无忌', '办事员', '7902', '1980-12-17', '800', null, '20');
+INSERT INTO `emp` VALUES ('7499', '曹操', '推销员', '7698', '1981-02-20', '1600', '300', '30');
+INSERT INTO `emp` VALUES ('7521', '杨志', '推销员', '7698', '1981-02-22', '1250', '500', '30');
+INSERT INTO `emp` VALUES ('7566', '朱元璋', '经理', '7839', '1981-04-02', '2975', null, '20');
+INSERT INTO `emp` VALUES ('7654', '殷天正', '推销员', '7698', '1981-09-28', '1250', '1400', '30');
+INSERT INTO `emp` VALUES ('7698', '张三丰', '经理', '7839', '1981-05-01', '2850', null, '30');
+INSERT INTO `emp` VALUES ('7782', '关羽', '经理', '7839', '1981-06-09', '2450', null, '10');
+INSERT INTO `emp` VALUES ('7788', '宋江', '分析员', '7566', '1987-04-19', '3000', null, '20');
+INSERT INTO `emp` VALUES ('7839', '韩少云', '董事长', null, '1981-11-17', '5000', null, '10');
+INSERT INTO `emp` VALUES ('7844', '孙二娘', '推销员', '7698', '1981-09-08', '1500', '0', '30');
+INSERT INTO `emp` VALUES ('7876', '张飞', '办事员', '7788', '1987-05-23', '1100', null, '20');
+INSERT INTO `emp` VALUES ('7900', '赵云', '办事员', '7698', '1981-12-03', '950', null, '30');
+INSERT INTO `emp` VALUES ('7902', '诸葛亮', '分析员', '7566', '1981-12-03', '3000', null, '20');
+INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23', '1300', null, '10');
+```
+
