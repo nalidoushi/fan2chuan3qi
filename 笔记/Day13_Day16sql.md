@@ -4,9 +4,9 @@
 
 ### 数据库
 
-数据库，简而言之就是存储数据的仓库，可以按照一定的数据结构存储管理大量的数据及数据 与数据之间的关系，它本质上是一种信息管理系统。
+数据库，简而言之就是存储数据的仓库，可以按照一定的数据结构存储管理大量的数据及数据与数据之间的关系，它本质上是一种信息管理系统。
 
-数据库根据存储采用的数据结构的不同可 以分为许多种，其中常见的有层次式数据库、网络式数据库、关系型数据库。
+数据库根据存储采用的数据结构的不同可以分为许多种，其中常见的有层次式数据库、网络式数据库、关系型数据库。
 
 其中关系型数据 库占据着市场的主流。
 
@@ -1010,7 +1010,7 @@ where中不能出现聚合函数,having中可以使用聚合函数
 
 没有分组时，可以认为having等价于where
 
-因为：没有分组时，having会将查询结果的每一行认成一个组，所有的过滤在组内进行时，起始就是对查询结果的每一行的过滤，因此，效果上等价于where
+因为：没有分组时，having会将查询结果的每一行认成一个组,只不过这个组里只有这条数据本身，所有的过滤在组内进行时，其实就是对查询结果的每一行的过滤，因此，效果上等价于where -- 唯一的不同就是可以使用聚合函数,但
 
 #### 案例
 
@@ -1141,9 +1141,84 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
    
    ```
 
-   
 
-​		
+### 子查询
 
+#### 准备数据
 
+```sql
+create table emp2( id int, name varchar(20), salary int, did int, job varchar(20) );
+insert into emp2 values (1,'aaa',3200,999,'it');
+insert into emp2 values (2,'bbb',4500,888,'it');
+insert into emp2 values (3,'ccc',7300,999,'saler');
+insert into emp2 values (4,'ddd',3000,999,'saler');
+insert into emp2 values (5,'eee',2800,777,'hr');
+insert into emp2 values (6,'fff',5100,777,'it');
+insert into emp2 values (7,'ggg',9100,777,'it');
+insert into emp2 values (8,'hhh',9900,666,'saler');
+```
+
+#### 概念
+
+子查询是在一条SQL语句中嵌入另一条查询语句，则该嵌入的查询语句称之为子查询语句。
+
+#### 非关联子查询
+
+非关联子查询中,子查询先于主查询执行,并将子查询的结果作为主查询的一部分使用。
+
+##### 标量子查询
+
+子查询是一个单行单列的结果，在主查询中作为一个值来使用。
+
+1. 查询所有收入大于员工aaa的员工
+
+   ```sql
+   select * from emp2 where salary > (select salary from emp2 where name='aaa');
+   ```
+
+2. 查询所有部门编号及全公司平均薪水
+
+   ```sql
+   select distinct did,(select avg(salary) from emp2) from emp2;
+   ```
+
+##### 列子查询
+
+子查询的结果是一个列多个值，在主查询中当作一个集合来使用。
+
+1. 查询所有有it员工的部门的平均薪资
+
+   ```sql
+   select did,avg(salary) from emp2 
+   where did in (select distinct did from emp2 where job='it') 
+   group by did;
+   ```
+
+2. 查询所有工资高于任意it员工的saler员工
+
+   ```sql
+   select name,salary from emp2 
+   where job='saler' 
+   and salary > any(select salary from emp2 where job='it');
+   ```
+
+3. 查询所有工资高于全部it员工的saler员工
+
+   ```sql
+   select name,salary from emp2 
+   where job='saler' 
+   and salary> all(select salary from emp2 where job='it');
+   ```
+
+##### 表子查询
+
+子查询的结果是一个表，在主查询中作为一个表来使用
+
+1. 查询所有部门平均工资大于5000元的部门中平均工资最低的部门
+
+   ```sql
+   select did, min(asal) from (select did,avg(salary) as asal from emp2 group by did having avg(salary)>5000) as atab;
+   ```
+
+#### 关联子查询
 
