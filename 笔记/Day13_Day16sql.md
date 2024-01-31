@@ -1401,7 +1401,7 @@ select * from dept3,emp3;
 
 虽然通常无法直接使用,但笛卡尔积查询是其他查询方式的基础,需要了解。
 
-<img src="images/Day13_Day16sql/image-20240131141644609.png" alt="image-20240131141644609"  />
+![image-20240131162534704](images/Day13_Day16sql/image-20240131162534704.png)
 
 ##### 内连接查询
 
@@ -1411,7 +1411,7 @@ select * from dept3,emp3;
 select * from dept3,emp3 where emp3.did = dept3.id;
 ```
 
-<img src="images/Day13_Day16sql/image-20240131142345312.png" alt="image-20240131142345312" />
+![image-20240131162450910](images/Day13_Day16sql/image-20240131162450910.png)
 
 这样的查询被称为内连接查询
 
@@ -1421,7 +1421,7 @@ select * from dept3,emp3 where emp3.did = dept3.id;
 select * from dept3 inner join emp3 on emp3.did = dept3.id;
 ```
 
-<img src="images/Day13_Day16sql/image-20240131142535914.png" alt="image-20240131142535914" />
+![image-20240131162506506](images/Day13_Day16sql/image-20240131162506506.png)
 
 内连接查询只能查找到两张表中都有对应数据的记录。
 
@@ -1536,7 +1536,7 @@ insert into order_prod values (999,77,3);
 
 3. 查询销售额最高的商品的名称
 
-   ```sql
+   ```
    
    ```
 
