@@ -1577,10 +1577,21 @@ insert into order_prod values (999,77,3);
    	prod.id,user.id
    ```
 
-6. 求总消费金额最高的人的人名
+6. 求总消费金额最高的人的人名(要求：不使用orders表中的money字段实现)
 
    ```sql
-   
+   select
+   	user.name,sum(prod.price * order_prod.num) tm
+   from
+       user inner join orders on orders.uid = user.id
+       inner join order_prod on order_prod.oid = orders.id
+       inner join prod on order_prod.pid = prod.id
+   group by
+   	user.id
+   order by
+   	tm desc
+   limit
+   	0,1
    ```
 
    
