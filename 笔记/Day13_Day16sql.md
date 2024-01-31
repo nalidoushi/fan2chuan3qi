@@ -621,7 +621,7 @@ default v;
 
 ### 外键约束
 
-多表设计相关的约束，后续讲解。
+多表设计相关的约束，后续讲解(多表查询章节)。
 
 ### 案例
 
@@ -1076,37 +1076,15 @@ SELECT [DISTINCT] *|列名 FROM tab_name LIMIT n,m;
 
 #### 准备数据
 
-```
-create database mydb4;
-use mydb4;
-create table user (id int, name varchar(20),age int, addr varchar(20));
-insert into user values (1,'aa',19,'bj');
-insert into user values (2,'bb',23,'sh');
-insert into user values (3,'cc',26,'gz');
-insert into user values (4,'dd',24,'bj');
-insert into user values (5,'ee',31,'sz');
-insert into user values (6,'ff',27,'sh');
-insert into user values (7,'gg',26,'bj');
-create table dept (id int ,name varchar(20));
-insert into dept values (999,'行政部');
-insert into dept values (888,'财务部');
-insert into dept values (777,'销售部');
-insert into dept values (666,'科技部');
-create table emp (id int,name varchar(20),did int);
-insert into emp values (1,'萨达姆',999);
-insert into emp values (2,'哈利波特',888);
-insert into emp values (3,'孙悟空',777);
-insert into emp values (4,'朴乾',777);
-insert into emp values (5,'本拉登',555);
-create table emp2( id int, name varchar(20), salary int, did int, job varchar(20) );
-insert into emp2 values (1,'aaa',3200,999,'it');
-insert into emp2 values (2,'bbb',4500,888,'it');
-insert into emp2 values (3,'ccc',7300,999,'saler');
-insert into emp2 values (4,'ddd',3000,999,'saler');
-insert into emp2 values (5,'eee',2800,777,'hr');
-insert into emp2 values (6,'fff',5100,777,'it');
-insert into emp2 values (7,'ggg',9100,777,'it');
-insert into emp2 values (8,'hhh',9900,666,'saler');
+```sql
+create table user2 (id int, name varchar(20),age int, addr varchar(20));
+insert into user2 values (1,'aa',19,'bj');
+insert into user2 values (2,'bb',23,'sh');
+insert into user2 values (3,'cc',26,'gz');
+insert into user2 values (4,'dd',24,'bj');
+insert into user2 values (5,'ee',31,'sz');
+insert into user2 values (6,'ff',27,'sh');
+insert into user2 values (7,'gg',26,'bj');
 ```
 
 #### 案例
@@ -1222,3 +1200,154 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
 
 #### 关联子查询
 
+关联子查询中，主查寻先于子查询执行，将主查寻的结果应用于子查询进行过滤。
+
+通常会配合exists来使用。
+
+1. 查询工资大于销售平均工资的it员工的姓名（此题也可以用非关联子查询中标量子查询实现）
+
+   ```sql
+   select name from emp2 
+   where job='it' 
+   and salary>(select avg(salary) from emp2 where job='saler');
+   
+   select name,salary from emp2 as otab where job='it' and exists (select * from emp2 as itab where job='saler' having otab.salary > avg(itab.salary));
+   ```
+
+### SQL查询编写技巧2
+
+#### 子查询的处理
+
+如果遇到子查询需求，先考虑使用非关联子查询，非关联子查询处理不了的再考虑关联子查询。
+
+非关联子查询，先写主查寻，遇到需要进一步获取的内容时，先空着，写好主查寻的结构后，再写查询，将子查询用作一个值、列、表应用在主查寻的空出来的位置中。
+
+关联子查询，先写主查寻，再将主查寻的结果理解为一张表，再编写子查询的语句，对主查寻中的每条数据进行过滤。
+
+### 多表处理
+
+#### 外键约束
+
+##### 概念
+
+关系型数据库可以保存数据和数据之间的关系。 
+
+数据以表记录的形式保存。
+
+数据之间的关系以表和表之间的关系的形式保存。 
+
+表和表之间的关系通过外键字段来维系，通过外键约束来约束。 
+
+一旦任何操作违背的外键约束，数据库会报错，阻止该操作的执行，防止出现数据无法对应的情况。
+
+![image-20240131110228547](images/Day13_Day16sql/image-20240131110228547.png)
+
+##### 定义
+
+1. 建表时指定外键约束
+
+   ```sql
+   [CONSTRAINT <外键名>] FOREIGN KEY (字段名 [，字段名2，…]) REFERENCES <主表名> (主键列1 [，主键列2，…])
+   [on delete restrict/CASCADE] [on update restrict/CASCADE];
+   
+   *RESTRICT : 只要本表格里面有指向主表的数据， 在主表里面就无法删除/修改相关记录。
+   *CASCADE : 如果在foreign key 所指向的那个表里面删除/修改一条记录，那么在此表里面的跟那个key一样的所有记录都会一同删掉/修改。
+   
+   ```
+
+   ```sql
+   create table dept(
+       id varchar(10) primary key,
+   	name varchar(20)
+   );
+   insert into dept values ('001','人事部');
+   insert into dept values ('002','财务部');
+   insert into dept values ('003','行政部');
+   insert into dept values ('004','销售部');
+   
+   create table emp(
+     id varchar(10) primary key,
+     name varchar(20),
+     did varchar(10),
+     foreign key (did) references dept(id)
+   );
+   insert into emp values ('999','孙悟空','001');
+   insert into emp values ('888','哈利波特','001');
+   insert into emp values ('777','萨达姆','002');
+   insert into emp values ('666','特朗普','003');
+   insert into emp values ('555','朴乾','004');
+   
+   update emp set did='005' where name='哈利波特';
+   delete from dept where id = '001';
+   ```
+
+2. 对已有的表增加外键约束
+
+   ```sql
+   ALTER TABLE tab_name ADD [CONSTRAINT fk_name] FOREIGN KEY(字段名) REFERENCES 表名(字段名) [on delete restrict] [on update restrict];
+   *RESTRICT: 只要本表格里面有指向主表的数据， 在主表里面就无法删除/修改相关记录。
+   *CASCADE: 如果在foreign key 所指向的那个表里面删除/修改一条记录，那么在此表里面的跟那个key一样的所有记录都会一同删掉/修改。
+   ```
+
+   ```sql
+   create table deptx(
+       id varchar(10) primary key,
+   	name varchar(20)
+   );
+   insert into deptx values ('001','人事部');
+   insert into deptx values ('002','财务部');
+   insert into deptx values ('003','行政部');
+   insert into deptx values ('004','销售部');
+   
+   create table empx(
+     id varchar(10) primary key,
+     name varchar(20),
+     did varchar(10)
+   );
+   insert into empx values ('999','孙悟空','001');
+   insert into empx values ('888','哈利波特','001');
+   insert into empx values ('777','萨达姆','002');
+   insert into empx values ('666','特朗普','003');
+   insert into empx values ('555','朴乾','004');
+   
+   alter table empx add foreign key (did) references deptx(id);
+   ```
+
+3. 删除外键
+
+   ```sql
+   ALTER TABLE tab_name DROP FOREIGN KEY fk_name;
+   ```
+
+   ```sql
+   show create table empx;
+   alter table empx drop foreign key empx_ibfk_1;
+   ```
+
+#### 多表设计
+
+数据库通过表来存储数据，通过表和表之间的关系来存储数据之间的关系。 
+
+通过外键字段来维系表和表之间的关系。 
+
+而根据表和表之间关系的不同，外键字段设置的方式不同
+
+##### 1对1
+
+对于一对一的关系，可以在任意一边设计外键保存另一方的主键，维系两张表的关系。
+
+![image-20240131114133691](images/Day13_Day16sql/image-20240131114133691.png)
+
+##### 1对多
+
+对于一对多的关系，需要在多的一方设计外键保存另一方的主键，维系两张表的关系。
+
+![image-20240131114551071](images/Day13_Day16sql/image-20240131114551071.png)
+
+##### 多对多
+
+对于多对多的关系，需要设计第三方关系表保存两张表之间的对应关系。
+
+相当于将一个多对多拆分为两个一对多来进行存储。
+
+![image-20240131115047954](images/Day13_Day16sql/image-20240131115047954.png)
