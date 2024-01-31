@@ -1536,7 +1536,50 @@ insert into order_prod values (999,77,3);
 
 3. 查询销售额最高的商品的名称
 
+   ```sql
+   select
+     prod.name
+   from
+     prod inner join order_prod on prod.id = order_prod.pid
+   group by 
+     prod.name
+   order by
+     prod.price * sum(order_prod.num) desc
+   limit
+     0,1;
    ```
+
+4. 下单次数最多的用户的名字，结果集中包含：用户编号，用户名，下单次数
+
+   ```sql
+   select
+     user.id,user.name,count(1) as sc
+   from
+     user inner join orders on orders.uid = user.id
+   group by
+     user.name
+   order by
+     sc desc
+   limit
+     0,1
+   ```
+
+5. 查询每个人购买的商品的名称及数量
+
+   ```sql
+   select
+   	user.id,user.name,prod.id,prod.name,sum(order_prod.num) as sc
+   from
+   	user inner join orders on orders.uid = user.id
+   	inner join order_prod on order_prod.oid = orders.id
+   	inner join prod on order_prod.pid = prod.id
+   group by
+   	prod.id,user.id
+   ```
+
+6. 求总消费金额最高的人的人名
+
+   ```sql
    
    ```
 
