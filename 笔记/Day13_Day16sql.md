@@ -1916,10 +1916,35 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 11. 列出所有职员的姓名及其部门名称，部门的人数。
 
     ```sql
-    
+    select
+    	emp.empname,dept.deptno,dept.deptname,(
+        	select
+            	count(1)
+            from
+            	emp
+            group by
+    	        deptno
+            having 
+            	deptno = dept.deptno
+        ) as total
+    from
+    	emp inner join dept on emp.deptno = dept.deptno
     ```
 
-    
+    ```sql
+    select
+    	emp.empname,dept.deptname,ttab.total
+    from
+    	emp inner join dept on emp.deptno = dept.deptno
+    	inner join (
+       		select
+                deptno,count(1) as total
+            from
+                emp
+            group by 
+                deptno
+        ) as ttab on ttab.deptno = dept.deptno;
+    ```
 
 ### SQL查询综合练习4
 
@@ -1931,10 +1956,10 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 
 ## 图形化工具
 
-**HeidiSQL**  https://www.heidisql.com/download.php MariaDB官方推荐 免费
+**HeidiSQL**  https://www.heidisql.com/download.php [免费] [MariaDB官方推荐] [windows支持]
 
-**SQLyog ** https://webyog.com/product/sqlyog/ 全平台支持 收费 试用14天
+**SQLyog ** https://webyog.com/product/sqlyog/ [收费] [14天试用] [全平台支持]
 
-**Navicat**  https://www.navicat.com.cn/  全平台支持 收费 试用14天
+**Navicat**  https://www.navicat.com.cn/  [收费] [14天试用] [全平台支持]
 
-**MySQL Workbench** https://dev.mysql.com/downloads/workbench/ 官方工具 免费
+**MySQL Workbench** https://dev.mysql.com/downloads/workbench/ [免费] [全平台支持] [官方工具]
