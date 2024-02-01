@@ -1831,10 +1831,81 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 6. 列出与曹操从事相同职位的所有员工及部门名称。
 
    ```sql
-   
+   select 
+   	emp.empname,dept.deptname
+   from
+   	emp inner join dept on emp.deptno = dept.deptno
+   where 
+   	emp.job = (select job from emp where empname = '曹操')
+   	and
+   	emp.empname != '曹操';
    ```
 
-   
+7. 列出薪资高于销售部所有人的员工的姓名及所在部门
+
+   ```sql
+   select 
+   	emp.empname,dept.deptname
+   from 
+   	emp inner join dept on emp.deptno=dept.deptno
+   where
+   	emp.sal > (
+       	select
+           	emp.sal
+           from
+       		emp inner join dept on emp.deptno=dept.deptno
+           where
+           	dept.deptname = "销售部"
+           order by 
+           	sal desc
+           limit
+           	0,1
+       );
+   ```
+
+   ```sql
+   select
+   	emp.empname,dept.deptname
+   from
+   	emp inner join dept on emp.deptno=dept.deptno
+   where
+   	emp.sal > all (
+       	select
+           	emp.sal
+           from
+       		emp inner join dept on emp.deptno=dept.deptno
+           where
+           	dept.deptname = "销售部"
+       );
+   ```
+
+8. 列出在每个部门职位的员工数量、平均工资。
+
+   ```sql
+   select
+   	dept.deptname,emp.job,count(emp.empname),avg(sal)
+   from
+   	dept left join emp on emp.deptno = dept.deptno
+   group by 
+   	dept.deptno,emp.job;
+   ```
+
+9. 查出至少有一个员工的部门。显示部门人数、部门编号、部门名称、部门位置。
+
+   ```sql
+   select 
+   	dept.deptno,dept.deptname,dept.loc,count(1)
+   from
+   	dept inner join emp on emp.deptno = dept.deptno
+   group by
+   	dept.deptno;
+   ```
+
+10. 列出受雇日期早于直接上级的所有员工的编号、姓名、部门名称
+
+    ```sql
+    
+    ```
 
 ### SQL查询综合练习4
 
@@ -1852,4 +1923,4 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 
 **Navicat**
 
-**sequelpro** https://www.sequelpro.com/
+**MySQL Workbench** https://dev.mysql.com/downloads/workbench/
