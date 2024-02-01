@@ -1665,18 +1665,6 @@ insert into order_prod values (999,77,3);
 
     ```sql
     select
-    	sum(num)
-    from
-    	order_prod inner join prod on order_prod.pid = prod.id
-    where
-    	prod.name='统一冰红茶'
-    
-    ```
-
-    
-
-    ```sql
-    select
     	(sum(num) / (
             select
                 sum(num)
@@ -1693,7 +1681,23 @@ insert into order_prod values (999,77,3);
     	user.name='aaa' and prod.name='统一冰红茶'
     ```
 
+11. 求购买过滞销商品(总销量小于等于3)的用户
+
+    ```sql
+    select
+    	distinct user.name
+    from
+    	user inner join orders on orders.uid = user.id
+    	inner join order_prod on order_prod.oid = orders.id
+    where 
+    	order_prod.pid in (select pid from order_prod group by pid having sum(num) <=3);
+    ```
+
+12. 查询购买最畅销商品最多的人的名称
+
+    ```sql
     
+    ```
 
 ### SQL查询综合练习3
 
