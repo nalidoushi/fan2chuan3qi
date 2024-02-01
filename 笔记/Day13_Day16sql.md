@@ -1962,4 +1962,4 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 
 **Navicat**  https://www.navicat.com.cn/  [收费] [14天试用] [全平台支持]
 
-**MySQL Workbench** https://dev.mysql.com/downloads/workbench/ [免费] [全平台支持] [官方工具]
+**MySQL Workbench** https://dev.mysql.com/downloads/workbench/ [免费] [全平台支持] [MySQL官方工具]
