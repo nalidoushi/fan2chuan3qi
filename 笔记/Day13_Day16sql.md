@@ -1693,10 +1693,33 @@ insert into order_prod values (999,77,3);
     	order_prod.pid in (select pid from order_prod group by pid having sum(num) <=3);
     ```
 
-12. 查询购买最畅销商品最多的人的名称
+12. 求购买最畅销商品最多的人的名称
 
     ```sql
-    
+    select
+    	user.id,user.name,order_prod.pid,sum(order_prod.num) as sn
+    from
+    	user inner join orders on orders.uid = user.id
+    	inner join order_prod on order_prod.oid = orders.id
+    where
+    	order_prod.pid = (
+        	select
+                pid
+            from
+                order_prod
+            group by
+                pid
+            order by
+                sum(num) desc
+            limit
+                0,1
+        )
+    group by
+    	user.id
+    order by 
+    	sn desc
+    limit
+    	0,1;
     ```
 
 ### SQL查询综合练习3
@@ -1742,4 +1765,8 @@ INSERT INTO `emp` VALUES ('7900', '赵云', '办事员', '7698', '1981-12-03', '
 INSERT INTO `emp` VALUES ('7902', '诸葛亮', '分析员', '7566', '1981-12-03', '3000', null, '20');
 INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23', '1300', null, '10');
 ```
+
+### SQL查询综合练习4
+
+牛客网：https://www.nowcoder.com/exam/oj?tab=SQL%E7%AF%87&topicId=82
 
