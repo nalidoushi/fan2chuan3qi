@@ -1787,6 +1787,50 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 4. 列出最低薪资大于1500的职位及从事此职位的员工人数
 
    ```sql
+   select
+   	job,count(1)
+   from 
+   	emp
+   where
+   	job in (
+       	select
+               job
+           from
+               emp
+           group by
+               job
+           having 
+               min(sal)>1500
+       )
+   group by
+   	job;
+   ```
+
+   ```sql
+   select 
+   	job,count(1)
+   from 
+   	emp 
+   group by 
+   	job
+   having
+   	min(sal)>1500;
+   ```
+
+5. 列出销售部的员工的姓名
+
+   ```sql
+   select 
+   	* 
+   from 
+   	emp inner join dept on dept.deptno = emp.deptno 
+   where 
+   	dept.deptname='销售部';
+   ```
+
+6. 列出与曹操从事相同职位的所有员工及部门名称。
+
+   ```sql
    
    ```
 
@@ -1794,11 +1838,11 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 
 ### SQL查询综合练习4
 
-牛客网：https://www.nowcoder.com/exam/oj?tab=SQL%E7%AF%87&topicId=82
+**牛客网**：https://www.nowcoder.com/exam/oj?tab=SQL%E7%AF%87&topicId=82
 
-力扣：https://leetcode.cn/problemset/database/
+**力扣**：https://leetcode.cn/problemset/database/
 
-sqlzoo：https://sqlzoo.net/wiki/SQL_Tutorial
+**sqlzoo**：https://sqlzoo.net/wiki/SQL_Tutorial
 
 ## 图形化工具
 
@@ -1808,3 +1852,4 @@ sqlzoo：https://sqlzoo.net/wiki/SQL_Tutorial
 
 **Navicat**
 
+**sequelpro** https://www.sequelpro.com/
