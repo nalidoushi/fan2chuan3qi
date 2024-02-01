@@ -1664,7 +1664,33 @@ insert into order_prod values (999,77,3);
 10. aaa用户对统一冰红茶销量的贡献比
 
     ```sql
+    select
+    	sum(num)
+    from
+    	order_prod inner join prod on order_prod.pid = prod.id
+    where
+    	prod.name='统一冰红茶'
     
+    ```
+
+    
+
+    ```sql
+    select
+    	(sum(num) / (
+            select
+                sum(num)
+            from
+                order_prod inner join prod on order_prod.pid = prod.id
+            where
+                prod.name='统一冰红茶'
+        )) as rate
+    from
+    	user inner join orders on orders.uid = user.id
+    	inner join order_prod on order_prod.oid = orders.id
+    	inner join prod on order_prod.pid = prod.id
+    where 
+    	user.name='aaa' and prod.name='统一冰红茶'
     ```
 
     
