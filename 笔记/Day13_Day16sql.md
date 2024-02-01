@@ -1904,8 +1904,22 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 10. 列出受雇日期早于直接上级的所有员工的编号、姓名、部门名称
 
     ```sql
+    select
+    	t1.empno,t1.empname,t1.deptno,dept.deptname
+    from
+    	emp as t1 inner join emp as t2 on t1.mgr = t2.empno
+    	inner join dept on t1.deptno = dept.deptno
+    where
+    	t1.hiredate < t2.hiredate;
+    ```
+
+11. 列出所有职员的姓名及其部门名称，部门的人数。
+
+    ```sql
     
     ```
+
+    
 
 ### SQL查询综合练习4
 
@@ -1917,10 +1931,10 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 
 ## 图形化工具
 
-**HeidiSQL**  https://www.heidisql.com/download.php
+**HeidiSQL**  https://www.heidisql.com/download.php MariaDB官方推荐 免费
 
-**SQLyog**
+**SQLyog ** https://webyog.com/product/sqlyog/ 全平台支持 收费 试用14天
 
-**Navicat**
+**Navicat**  https://www.navicat.com.cn/  全平台支持 收费 试用14天
 
-**MySQL Workbench** https://dev.mysql.com/downloads/workbench/
+**MySQL Workbench** https://dev.mysql.com/downloads/workbench/ 官方工具 免费
