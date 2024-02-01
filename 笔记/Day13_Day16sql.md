@@ -1611,7 +1611,31 @@ insert into order_prod values (999,77,3);
    	0,1;
    ```
 
-8. 查询所有商品和最畅销商品的销售量的差距
+8. 查询所有商品和最畅销商品的销售数量的差距
+
+   ```sql
+   select
+     order_prod.pid,sum(order_prod.num) - (
+     	select
+           sum(order_prod.num) as sn
+       from 
+           order_prod
+       group by
+           order_prod.pid
+       order by 
+           sn desc
+       limit
+           0,1
+     ) as dn
+   from
+     order_prod
+   group by
+     order_prod.pid
+   order by dn 
+   	desc;
+   ```
+
+9. 消费额最大的用户和消费额最小的用户的消费额的差(要求：允许使用orders表中的money字段实现)
 
    ```sql
    
