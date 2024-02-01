@@ -1638,7 +1638,27 @@ insert into order_prod values (999,77,3);
 9. 消费额最大的用户和消费额最小的用户的消费额的差(要求：允许使用orders表中的money字段实现)
 
    ```sql
-   
+   select
+   	sum(money) - (
+       	select
+               sum(money)
+           from
+               orders
+           group by
+               uid
+           order by
+               sum(money) asc
+           limit
+               0,1
+       ) as diff
+   from
+   	orders
+   group by
+   	uid
+   order by
+   	sum(money) desc
+   limit
+   	0,1;
    ```
 
    
