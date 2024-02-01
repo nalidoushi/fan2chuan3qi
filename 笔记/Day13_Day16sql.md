@@ -1144,7 +1144,7 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
 
 #### 非关联子查询
 
-非关联子查询中,子查询先于主查询执行,并将子查询的结果作为主查询的一部分使用。
+非关联子查询中,子查询和主查询无关,子查询先于主查询执行,并将子查询的结果作为主查询的一部分使用。
 
 ##### 标量子查询
 
@@ -1202,7 +1202,7 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
 
 #### 关联子查询
 
-关联子查询中，主查寻先于子查询执行，将主查寻的结果应用于子查询进行过滤。
+关联子查询中，子查询中用到主查询中的列，主查寻先于子查询执行，之后将主查寻的结果应用于子查询进行过滤。
 
 通常会配合exists来使用。
 
@@ -1222,7 +1222,7 @@ insert into emp2 values (8,'hhh',9900,666,'saler');
 
 如果遇到子查询需求，先考虑使用非关联子查询，非关联子查询处理不了的再考虑关联子查询。
 
-非关联子查询，先写主查寻，遇到需要进一步获取的内容时，先空着，写好主查寻的结构后，再写子查询，将子查询的结果用作一个值、列、表应用在主查寻的空出来的位置中。
+非关联子查询，先写主查寻，遇到需要进一步获取的内容时，先空着，写好主查寻的结构后，再写子查询，将子查询的结果用作一个值、列、表应用在主查寻中，填入空出的位置。
 
 关联子查询，先写主查寻，再将主查寻的结果理解为一张表，再编写子查询的语句，对主查寻中的每条数据进行过滤。
 
@@ -1592,6 +1592,23 @@ insert into order_prod values (999,77,3);
    	tm desc
    limit
    	0,1
+   ```
+
+7. 查询单笔订单金额最高的订单所属的用户名(要求：不使用orders表中的money字段实现)
+
+   ```sql
+   select
+   	user.name,orders.id,sum(prod.price*order_prod.num) as sn
+   from
+   	user inner join orders on orders.uid = user.id
+   	inner join order_prod on order_prod.oid = orders.id
+   	inner join prod on order_prod.pid = prod.id
+   group by
+   	orders.id
+   order by
+   	sn desc
+   limit
+   	0,1;
    ```
 
    
