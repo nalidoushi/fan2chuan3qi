@@ -1768,13 +1768,43 @@ INSERT INTO `emp` VALUES ('7934', '夏侯惇', '办事员', '7782', '1982-01-23'
 
 1. 查询所有部门名称和部门中所有员工的信息，注意，有些部门没有任何员工也要被列出来。
 
-```
+   ```sql
+   select * from dept left join emp on dept.deptno = emp.deptno;
+   ```
 
-```
+2. 列出薪资比关羽高的所有员工
 
+   ```sql
+   select * from emp where sal > (select sal from emp where empname='关羽');
+   ```
 
+3. 列出所有员工的姓名及其直接上级的姓名。
+
+   ```sql
+   select t1.empname,t2.empname from emp as t1 left join emp t2 on t1.mgr = t2.empno;
+   ```
+
+4. 列出最低薪资大于1500的职位及从事此职位的员工人数
+
+   ```sql
+   
+   ```
+
+   
 
 ### SQL查询综合练习4
 
 牛客网：https://www.nowcoder.com/exam/oj?tab=SQL%E7%AF%87&topicId=82
+
+力扣：https://leetcode.cn/problemset/database/
+
+sqlzoo：https://sqlzoo.net/wiki/SQL_Tutorial
+
+## 图形化工具
+
+**HeidiSQL**  https://www.heidisql.com/download.php
+
+**SQLyog**
+
+**Navicat**
 
