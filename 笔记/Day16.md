@@ -292,3 +292,254 @@ try {
 
 ## JDBC实现CRUD
 
+### 示例
+
+```java
+/**
+ * JDBC 的 CRUD
+ */
+public class Demo03 {
+    private Connection conn = null;
+    private Statement stat = null;
+    private ResultSet rs = null;
+
+    @Before
+    public void before(){
+        try {
+            //1.注册数据库驱动
+            Class.forName("com.mysql.jdbc.Driver");
+            //2.获取数据库连接
+            conn = DriverManager.getConnection("jdbc:mysql:///day16","root","root");
+            //3.获取传输器
+            stat = conn.createStatement();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @After
+    public void after(){
+        //6.关闭资源
+        if(rs!=null){
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                rs = null;
+            }
+        }
+        if(stat!=null){
+            try {
+                stat.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                stat = null;
+            }
+        }
+        if(conn!=null){
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                stat = null;
+            }
+        }
+    }
+
+    /**
+     * 查询
+     */
+    @Test
+    public void query(){
+        try {
+            //1.传输sql执行,获取结果
+            rs = stat.executeQuery("select * from user where id <=2");
+            //2.处理结果
+            while(rs.next()){
+                String name = rs.getString("name");
+                System.out.println(name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 删除
+     */
+    @Test
+    public void delete(){
+        try {
+            //1.传输sql执行,获取结果
+            int i = stat.executeUpdate("delete from user where id = 4");
+            //2.处理就结果
+            if(i<=0){
+                System.out.println("删除失败!");
+            }else{
+                System.out.println("删除成功!影响的行数为:"+i);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 修改
+     */
+    @Test
+    public void update() {
+        try {
+            //1.传输sql执行,获取结果
+            int i = stat.executeUpdate("update user set age=88 where id=4");
+            //2.处理结果
+            if(i<=0){
+                System.out.println("执行失败!");
+            }else{
+                System.out.println("修改数据成功!影响到的行数为"+i);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 新增
+     */
+    @Test
+    public void insert(){
+        try {
+            //1.传输sql执行获取结果集
+            int i = stat.executeUpdate("insert into user values (4,'ddd',33)");
+            //2.处理结果
+            if(i<=0){
+                System.out.println("插入失败!");
+            }else{
+                System.out.println("插入成功，影响到的行数为"+i);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+}
+```
+
+## SQL注入攻击
+
+### 演示
+
+> 发现无需输入密码，直接登录，发现无需密码登录了进去。
+>
+> 这就是发生了SQL注入问题。
+
+```java
+/**
+    create table user2 (id int ,username varchar(20),password varchar(40));
+    insert into user2 values (1,'zs','123');
+    insert into user2 values (2,'ls','abc');
+    insert into user2 values (3,'ww','xyz');
+ */
+public class Demo04 {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        while(true){
+            //读取用户输入的用户名密码
+            System.out.println("开始登录..");
+            System.out.println("用户名:");
+            String username = scanner.nextLine();
+            System.out.println("密码:");
+            String password = scanner.nextLine();
+
+            //查询数据库,校验用户名密码
+            Connection conn = null;
+            Statement stat = null;
+            ResultSet rs = null;
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                conn = DriverManager.getConnection("jdbc:mysql:///day16","root","root");
+                stat = conn.createStatement();
+                rs = stat.executeQuery("select * from user2 where username = '"+username+"' and password = '"+password+"'");
+                if(rs.next()){
+                    //正确则登录成功,并调出登录逻辑
+                    System.out.println("登录成功!");
+                    break;
+                }else{
+                    //错误则登录失败,重新登录
+                    System.out.println("登录失败!用户密码不正确!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if(rs != null){
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        rs = null;
+                    }
+                }
+                if(stat != null){
+                    try {
+                        stat.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        stat = null;
+                    }
+                }
+                if(conn != null){
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        conn = null;
+                    }
+                }
+            }
+        }
+    }
+}
+
+```
+
+### 分析
+
+> 如果在jdbc程序中sql语句里使用了由用户传入参数
+>
+> 则用户可以恶意传入一些sql的关键字
+>
+> 拼接后改变了sql语句的语义,执行了一些意外的操作，产生了危害
+>
+> 这种攻击方式称为之SQL注入攻击
+
+### 解决
+
+使用PreparedStatement可以原生的防止SQL注入攻击
+
+## 预编译传输器对象
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
