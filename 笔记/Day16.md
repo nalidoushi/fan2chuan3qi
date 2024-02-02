@@ -742,3 +742,203 @@ public class Demo06 {
 ```
 
 ## 连接池
+
+### 概念
+
+数据库连接是一个非常宝贵的资源
+
+同时也是一种非常沉重的资源，开关连接都需要耗费大量的时间和资源
+
+如果每次访问数据库都重新创建、销毁连接
+
+则网站每天10w访问量，就意味着创建10w次连接关闭10w次连接，会极大耗费数据库资源
+
+甚至有可能造成数据库服务器内存溢出、宕机
+
+![img](images/Day16/clip_image002-17068636023772.jpg)
+
+频繁的开关连接相当的耗费资源
+
+所以我们可以设置一个连接池，在程序启动时就初始化一批连接放到池中在程序里共享
+
+需要连接时从池中获取，用完连接后不要关闭而是还回池中
+
+通过池实现了连接的共享，减少了连接的创建和销毁，减少了资源的消耗，提供了程序的效率
+
+![img](images/Day16/clip_image002-17068640062914.jpg)
+
+### 手写连接池
+
+Sun公司为连接池提供 javax.sql.DataSource接口，要求连接池去实现，所以连接池也叫数据源。
+
+```sql
+/**
+ * 手写连接池
+ */
+public class MyPool implements DataSource {
+    private static List<Connection> pool = new LinkedList<>();
+
+    static{
+        //启动时，初始化5个连接，存入池中
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            for (int i=0;i<5;i++) {
+                Connection conn = DriverManager.getConnection("jdbc:mysql:///day16","root","root");
+                pool.add(conn);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取连接
+     */
+    @Override
+    public Connection getConnection() throws SQLException {
+        //如果池里不够了，再存进去3个
+        if(pool.size()<=0){
+            for (int i=0;i<3;i++) {
+                Connection conn = DriverManager.getConnection("jdbc:mysql:///day16","root","root");
+                pool.add(conn);
+            }
+        }
+        //从池中取出一个连接返回
+        return pool.remove(0);
+    }
+
+    /**
+     * 还连接的方法
+     */
+    public void retConn(Connection conn){
+        try {
+            //要求连接不为null 且没有关闭过 ，将连接存入池中
+            if(conn!=null && !conn.isClosed()){
+                pool.add(conn);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Connection getConnection(String username, String password) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public PrintWriter getLogWriter() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public void setLogWriter(PrintWriter out) throws SQLException {
+
+    }
+
+    @Override
+    public void setLoginTimeout(int seconds) throws SQLException {
+
+    }
+
+    @Override
+    public int getLoginTimeout() throws SQLException {
+        return 0;
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return null;
+    }
+}
+
+```
+
+### 第三方连接池工具-C3P0
+
+#### 导入Jar包
+
+![image-20240202174940854](images/Day16/image-20240202174940854.png)
+
+#### 配置配置文件
+
+```properties
+c3p0.driverClass=com.mysql.jdbc.Driver
+c3p0.jdbcUrl=jdbc:mysql:///day16
+c3p0.user=root
+c3p0.password=root
+#c3p0.initialPoolSize=5
+#c3p0.maxPoolSize=20
+#c3p0.minPoolSize=5
+#c3p0.acquireIncrement=3
+#c3p0.maxIdleTime=30
+```
+
+#### 程序中获取连接池
+
+```java
+ComboPooledDataSource pool = new ComboPooledDataSource();
+```
+
+#### 使用连接池
+
+```java
+public class Demo08 {
+    private static DataSource dataSource = new ComboPooledDataSource();
+    public static void main(String[] args) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            conn = dataSource.getConnection();
+            ps = conn.prepareStatement("select * from user");
+            rs = ps.executeQuery();
+            while(rs.next()){
+                String name = rs.getString("name");
+                System.out.println(name);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(rs!=null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    rs = null;
+                }
+            }
+            if(ps!=null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    ps = null;
+                }
+            }
+            if(conn!=null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+}
+```
