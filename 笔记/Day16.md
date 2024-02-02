@@ -527,19 +527,218 @@ public class Demo04 {
 
 使用PreparedStatement可以原生的防止SQL注入攻击
 
-## 预编译传输器对象
+## PreparedStatement对象
 
+### 概述
 
+PreparedStatement是Statement的子类。在Statement的基础上增加了预编译机制。
 
+要求先传入sql语句的主干，参数用?替代，主干会被发送到数据库预编译，固定SQL的语义。
 
+之后单独传递参数，此时参数中即使有SQL关键字，也无法改变已经编译过的SQL的语义，从而防止了SQL注入。
 
+### 演示
 
+```java
+public class Demo05 {
+    public static void main(String[] args) {
 
+        Scanner scanner = new Scanner(System.in);
 
+        while(true){
+            //读取用户输入的用户名密码
+            System.out.println("开始登录..");
+            System.out.println("用户名:");
+            String username = scanner.nextLine();
+            System.out.println("密码:");
+            String password = scanner.nextLine();
 
+            //查询数据库,校验用户名密码
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                conn = DriverManager.getConnection("jdbc:mysql:///day16","root","root");
+                ps = conn.prepareStatement("select * from user2 where username=? and password=?");
+                ps.setString(1,username);
+                ps.setString(2,password);
+                rs = ps.executeQuery();
+                if(rs.next()){
+                    //正确则登录成功,并调出登录逻辑
+                    System.out.println("登录成功!");
+                    break;
+                }else{
+                    //错误则登录失败,重新登录
+                    System.out.println("登录失败!用户密码不正确!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if(rs != null){
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        rs = null;
+                    }
+                }
+                if(ps != null){
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        ps = null;
+                    }
+                }
+                if(conn != null){
+                    try {
+                        conn.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        conn = null;
+                    }
+                }
+            }
+        }
+    }
+}
+```
 
+### 特点
 
+能够防止SQL注入攻击，更安全
 
+有预编译机制，执行效率更高
 
+用?替代了参数的拼接，代码更加优雅
 
+### 练习
 
+```java
+/**
+ * PreparedStatement实现CRUD
+ */
+public class Demo06 {
+    private Connection conn;
+    private PreparedStatement ps;
+    private ResultSet rs;
+
+    @Before
+    public void before(){
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql:///day16","root","root");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @After
+    public void after(){
+        if(rs!=null){
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                rs = null;
+            }
+        }
+        if(ps!=null){
+            try {
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                ps = null;
+            }
+        }
+        if(conn!=null){
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                conn = null;
+            }
+        }
+    }
+
+    @Test
+    public void query(){
+        try {
+            ps = conn.prepareStatement("select * from user where name = ?");
+            ps.setString(1,"bbb");
+            rs = ps.executeQuery();
+            while(rs.next()){
+                String name = rs.getString("name");
+                int age = rs.getInt("age");
+                System.out.println(name+"#"+age);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void delete(){
+        try {
+            ps = conn.prepareStatement("delete from user where id = ?");
+            ps.setInt(1,4);
+            int i = ps.executeUpdate();
+            if(i<=0){
+                System.out.println("删除失败!");
+            }else{
+                System.out.println("删除成功!影响到的行数为"+i);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void update(){
+        try {
+            ps = conn.prepareStatement("update user set age = ? where id = ?");
+            ps.setInt(1,55);
+            ps.setInt(2,4);
+            int i = ps.executeUpdate();
+            if(i<=0){
+                System.out.println("新增失败!");
+            }else{
+                System.out.println("新增成功!影响到的行数为"+i);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void insert(){
+        try {
+            ps = conn.prepareStatement("insert into user values (?,?,?)");
+            ps.setInt(1,4);
+            ps.setString(2,"ddd");
+            ps.setInt(3,44);
+            int i = ps.executeUpdate();
+            if(i<=0){
+                System.out.println("新增失败!");
+            }else{
+                System.out.println("新增成功!影响到的行数为"+i);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
+```
+
+## 连接池
