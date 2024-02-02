@@ -191,7 +191,104 @@ Object getObject(string columnName)
 
 ### 释放资源
 
+#### 概述
 
+JDBC相关的对象使用之后都要释放。
 
+Connection对象占用数据库连接，而数据连接非常有限且宝贵，使用过后要尽快释放。
 
+Statement对象、ResultSet对象中封装着SQL语句、执行结果数据，占用内存资源，用过后也应尽快释放。
+
+释放顺序：越晚获取的对象越先关闭。
+
+#### 示例
+
+##### 标准写法
+
+```java
+Connection conn = null;
+Statement stat = null;
+ResultSet rs = null;
+try {
+    ...
+} catch (Exception e) {
+    e.printStackTrace();
+    throw new RuntimeException(e);
+} finally {
+    try {
+        if (rs!=null) {
+            rs.close();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw new RuntimeException(e);
+    } finally {
+        rs = null;
+        try {
+            if (stat != null) {
+                stat.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } finally {
+            stat = null;
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            } finally {
+                conn = null;
+            }
+        }
+    }
+}
+```
+
+##### 简略写法
+
+```java
+Connection conn = null;
+Statement stat = null;
+ResultSet rs = null;
+try {
+    ...
+} catch (Exception e) {
+    e.printStackTrace();
+    throw new RuntimeException(e);
+} finally {
+    if (rs!=null) {
+        try {
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            rs = null;
+        }
+    }
+    if (stat!=null) {
+        try {
+            stat.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            stat = null;
+        }
+    }
+    if (conn!=null) {
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conn = null;
+        }
+    }
+}
+```
+
+## JDBC实现CRUD
 

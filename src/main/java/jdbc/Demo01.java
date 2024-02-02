@@ -5,6 +5,10 @@ import com.mysql.jdbc.Driver;
 import java.sql.*;
 
 /**
+ * JDBC入门案例
+ */
+
+/**
     create database day16;
     use day16;
     create table user(id int,name varchar(255),age int);

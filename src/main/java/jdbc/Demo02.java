@@ -2,6 +2,9 @@ package jdbc;
 
 import java.sql.*;
 
+/**
+ * JDBC详解
+ */
 public class Demo02 {
 
     public static void main(String[] args)  {
