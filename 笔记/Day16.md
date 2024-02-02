@@ -28,13 +28,9 @@ JDBC主要是由 java.sql 和javax.sql包组成的,并且这两个包已经被�
 
 ## 入门案例
 
-### 导入驱动包
-
-![image-20240202093224931](images/Day16/image-20240202093224931.png)
-
 ### 准备数据
 
-```sql
+```java
 create database day16;
 use day16;
 create table user(id int,name varchar(255),age int);
@@ -42,6 +38,20 @@ insert into user values (1,'aaa',18);
 insert into user values (2,'bbb',22);
 insert into user values (3,'ccc',31);
 ```
+
+### 导入驱动包
+
+> MySQL5 MariaDB 导入 [mysql-connector-java-5.1.38-bin.jar]
+>
+> MySQL8 导入[mysql-connector-j-8.3.0.jar]
+
+![image-20240202093224931](images/Day16/image-20240202093224931.png)
+
+### 移除依赖包
+
+> 如果需要移除导入的依赖包，可以按照此方法操作
+
+![image-20240202113041077](images/Day16/image-20240202113041077.png)
 
 ### 代码实现
 
@@ -69,13 +79,117 @@ public static void main(String[] args) throws SQLException {
     }
 ```
 
+## API详解
 
+### 注册数据库驱动
 
+#### 传统方式
 
+```java
+DriverManager.registerDriver(new Driver());
+```
 
+使用这种方式注册数据库驱动有两个缺点:
 
+1. mysql的中Driver接口的实现类的静态代码块本身就会注册驱动，所以这种方式会造成驱动被注册两次。
+2. 这种方式导致了程序和具体的数据库驱动绑死在了一起，切换驱动时需要重新导包,程序的灵活性比较低。
 
+不推荐使用
 
+#### 推荐方式
+
+```java
+Class.forName("com.mysql.jdbc.Driver"); //MySQL5 MariaDB
+Class.forName("com.mysql.cj.jdbc.Driver");//MySQL8
+```
+
+1. 这种方式,通过类加载,保证驱动类的静态代码块一定会被执行,触发驱动类中静态代码块中的驱动注册,避免了重复注册
+
+   ![image-20240202105625026](images/Day16/image-20240202105625026.png)
+
+2. 这种方式通过字符串配置驱动类,可以提取到配置文件中,防止程序和驱动包绑定死
+
+### 获取数据库连接
+
+#### 数据库URL
+
+数据库的URL用于标识数据库的位置信息，不同的数据库地址写法不同，其作用包括
+
+1. 告知程序要连接的数据库的位置、连接参数、用户名、密码等信息
+2. 使程序知道要连接的是哪种数据库，用哪个驱动包
+
+| 数据库    | 地址写法                                                     | 示例                                                         |
+| --------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| mysql5    | **jdbc:mysql://地址:端口/库名?参数1=值1&参数2=值2&..**       | jdbct:mysql://localhost:3306/day16<br />jdbct:mysql://localhost/day16<br />jdbc:mysql:///day16 |
+| mysql8    | **jdbc:mysql://地址:端口/库名?参数1=值1&参数2=值2&..**       | jdbct:mysql://localhost:3306/day16?serverTimezone=UTC        |
+| orace     | **jdbc:oracle:thin:@主机名:端口号:实例名**                   | jdbc:oracle:thin:@localhost:1521:sid                         |
+| sqlServer | **jdbc:microsoft:sqlserver://主机名:端口号;DatabaseName=库名** | jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=sid   |
+
+### Connection对象
+
+#### 概述
+
+Connection代表数据库的链接，是数据库编程中最重要的一个对象
+
+客户端与数据库所有交互都是通过connection对象完成的
+
+#### API
+
+```java
+createStatement()//创建向数据库发送sql的statement对象。
+prepareStatement(sql)//创建向数据库发送预编译sql的PreparedSatement对象。
+setAutoCommit(boolean autoCommit)//设置事务是否自动提交。 
+commit()//在链接上提交事务。
+rollback()//在此链接上回滚事务。
+```
+
+### Statement对象
+
+#### 概述
+
+Statement对象用于向数据库发送SQL语句，并获取执行结果
+
+#### API
+
+```java
+ResultSet executeQuery(String sql) //用于向数据库发送查询语句。
+int executeUpdate(String sql) //用于向数据库发送insert、update或delete语句
+boolean execute(String sql) //用于向数据库发送任意sql语句
+addBatch(String sql) //把多条sql语句放到一个批处理中。
+executeBatch() //向数据库发送一批sql语句执行。 
+```
+
+### ResultSet对象
+
+#### 概述
+
+ResultSet对象代表SQL查询结果。
+
+其中以表的形式封装了查询结果数据。
+
+#### API
+
+```java
+boolean next() //移动到下一行,如果成功指向了一条新的数据返回true，否则返回false
+boolean Previous() //移动到前一行,如果成功指向了一条数据返回true，否则返回false
+boolean absolute(int row) //移动到指定行,如果成功指向了一条数据返回true，否则返回false
+void beforeFirst()//移动resultSet的第一行的前面
+void afterLast() //移动到resultSet的最后一行的后面
+```
+
+```java
+String getString(int index)
+String getString(String columnName)
+int getInt(columnIndex)
+int getInt(columnLabel)
+double getDouble(columnIndex)
+double getDouble(columnLabel)
+...
+Object getObject(int index)
+Object getObject(string columnName)
+```
+
+### 释放资源
 
 
 
