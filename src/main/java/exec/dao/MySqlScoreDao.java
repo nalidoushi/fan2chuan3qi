@@ -50,6 +50,9 @@ public class MySqlScoreDao implements ScoreDao {
         }
     }
 
+    /**
+     * 获取所有成绩
+     */
     @Override
     public List<Score> getAllScore() {
         Connection conn = null;
@@ -81,6 +84,87 @@ public class MySqlScoreDao implements ScoreDao {
         }finally {
             //关闭资源
             DaoUtils.close(rs,ps,conn);
+        }
+    }
+
+    /**
+     * 新增成绩
+     */
+    @Override
+    public void insertScore(Score score) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try{
+            //注册数据库驱动
+            //获取数据库连接
+            conn = DaoUtils.getConn();
+            //获取传输器
+            ps = conn.prepareStatement("insert into score values (null,?,?,?,?)");
+            ps.setInt(1,score.getMath());
+            ps.setInt(2,score.getChinese());
+            ps.setInt(3,score.getEnglish());
+            ps.setInt(4,score.getUid());
+            //执行sql
+            ps.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }finally {
+            //关闭资源
+            DaoUtils.close(null,ps,conn);
+        }
+    }
+
+    /**
+     * 根据uid修改成绩
+     */
+    @Override
+    public void updateScoreByUid(Score score) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try{
+            //注册数据库驱动
+            //获取数据库连接
+            conn = DaoUtils.getConn();
+            //获取传输器
+            ps = conn.prepareStatement("update score set math=?,chinese=?,english=? where uid=?");
+            ps.setInt(1,score.getMath());
+            ps.setInt(2,score.getChinese());
+            ps.setInt(3,score.getEnglish());
+            ps.setInt(4,score.getUid());
+            //执行sql
+            ps.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }finally {
+            //关闭资源
+            DaoUtils.close(null,ps,conn);
+        }
+    }
+
+    /**
+     * 根据id删除成绩
+     */
+    @Override
+    public void delScore(int id) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try{
+            //注册数据库驱动
+            //获取数据库连接
+            conn = DaoUtils.getConn();
+            //获取传输器
+            ps = conn.prepareStatement("delete from score where id = ?");
+            ps.setInt(1,id);
+            //执行sql
+            ps.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }finally {
+            //关闭资源
+            DaoUtils.close(null,ps,conn);
         }
     }
 }

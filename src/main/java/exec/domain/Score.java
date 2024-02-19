@@ -61,7 +61,8 @@ public class Score {
     @Override
     public String toString() {
         return "[" +
-                "学号：" + uid +
+                "id：" + id +
+                ", 学号：" + uid +
                 ", 数学：" + math +
                 ", 语文：" + chinese +
                 ", 英语：" + english +

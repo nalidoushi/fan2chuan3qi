@@ -34,7 +34,7 @@ public class ConsoleController01 {
                 User user = doLogin();
                 //登录失败
                 if(user==null){
-                        continue;
+                    continue;
                 }
                 //登录成功
                 if(user.getRole() == 0){
@@ -75,17 +75,61 @@ public class ConsoleController01 {
                 continue;
             }else if("2".equals(line)){
                 System.out.println("请输入要新增的成绩信息，格式：math,chinese,english,uid");
+                line = scanner.nextLine();
                 //--校验格式
-
+                if(!line.matches("([0-9]|[1-9][0-9]|100),([0-9]|[1-9][0-9]|100),([0-9]|[1-9][0-9]|100),\\d+")){
+                    System.out.println("输入的成绩格式不正确，请重新输入!");
+                    continue;
+                }
+                int math = Integer.parseInt(line.split(",")[0]);
+                int chinese = Integer.parseInt(line.split(",")[1]);
+                int english = Integer.parseInt(line.split(",")[2]);
+                int uid = Integer.parseInt(line.split(",")[3]);
                 //--新增成绩
-                //--成功，提示成功
-                //--失败，提示失败
+                try {
+                    scoreService.addScore(new Score(0,math,chinese,english,uid));
+                    //--成功，提示成功
+                    System.out.println("新增成绩成功!");
+                    continue;
+                } catch (MsgException e) {
+                    //--失败，提示失败
+                    System.out.println("新增成绩失败!原因:"+e.getMessage());
+                    continue;
+                }
             }else if("3".equals(line)){
-                System.out.println("修改..");
+                System.out.println("根据用户编号修改学生成绩，请输入修改信息，格式：math,chinese,english,uid");
+                line = scanner.nextLine();
+                //--校验格式
+                if(!line.matches("([0-9]|[1-9][0-9]|100),([0-9]|[1-9][0-9]|100),([0-9]|[1-9][0-9]|100),\\d+")){
+                    System.out.println("输入的成绩格式不正确，请重新输入!");
+                    continue;
+                }
+                int math = Integer.parseInt(line.split(",")[0]);
+                int chinese = Integer.parseInt(line.split(",")[1]);
+                int english = Integer.parseInt(line.split(",")[2]);
+                int uid = Integer.parseInt(line.split(",")[3]);
+                //--修改成绩
+                try {
+                    scoreService.updateScore(new Score(0,math,chinese,english,uid));
+                    System.out.println("修改成绩成功!");
+                    continue;
+                } catch (MsgException e) {
+                    System.out.println("修改成绩失败,原因:"+e.getMessage());
+                    continue;
+                }
             }else if("4".equals(line)){
-                System.out.println("删除..");
+                System.out.println("请输入要删除的成绩编号:");
+                line = scanner.nextLine();
+                if(!line.matches("^\\d+$")){
+                    System.out.println("输入的成绩编号格式不正确，请重新输入!");
+                    continue;
+                }
+                int id = Integer.parseInt(line);
+                scoreService.rmScore(id);
+                System.out.println("删除成功!");
+                continue;
             }else if("5".equals(line)){
-                System.out.println("退出..");
+                System.out.println("退出登录成功!");
                 return;
             }else{
                 System.out.println("错误的操作码，请重新选择！");
