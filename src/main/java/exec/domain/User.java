@@ -6,14 +6,16 @@ package exec.domain;
 public class User {
     private int id;
     private String name;
+    private String psw;
     private int role;
 
     public User() {
     }
 
-    public User(int id, String name, int role) {
+    public User(int id, String name, String psw, int role) {
         this.id = id;
         this.name = name;
+        this.psw = psw;
         this.role = role;
     }
 
@@ -33,6 +35,14 @@ public class User {
         this.name = name;
     }
 
+    public String getPsw() {
+        return psw;
+    }
+
+    public void setPsw(String psw) {
+        this.psw = psw;
+    }
+
     public int getRole() {
         return role;
     }
@@ -46,6 +56,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", psw='" + psw + '\'' +
                 ", role=" + role +
                 '}';
     }
