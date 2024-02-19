@@ -8,6 +8,10 @@ import java.util.Arrays;
 
 /**
  * 批处理 - Statement方式
+ *
+ * 支持结构不同的sql加入一个批
+ * 对于结构相同的sql,需要重复写很多遍
+ *
  * create database day17;
  * use day17;
  * create table user(id int,name varchar(20),age int);
