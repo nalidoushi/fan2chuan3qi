@@ -11,6 +11,12 @@ import exec.service.UserServiceImpl;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * create database exec66;
+ * use exec66;
+ * create table user (id int,name varchar(40),psw varchar(40),role int); #0老师1学生
+ * create table score(id int primary key auto_increment,math int,chinese int,english int,uid int);
+ */
 public class ConsoleController01 {
 
     private static Scanner scanner = new Scanner(System.in);
@@ -24,20 +30,28 @@ public class ConsoleController01 {
             System.out.println("##请选择您要进行的操作:[1]登录 [2]注册 [3]退出");
             line = scanner.nextLine();
             if("1".equals(line)){
+                //登录
                 User user = doLogin();
+                //登录失败
                 if(user==null){
-                    continue;
+                        continue;
                 }
-                if(user.getRole() == 0){//老师
+                //登录成功
+                if(user.getRole() == 0){
+                    //处理老师
                     handleTeacher(user);
-                }else{//学生
+                }else{
+                    //处理学生
                     handleStu(user);
                 }
             } else if("2".equals(line)) {
+                //注册
                 doRegist();
-            }else if("3".equals(line)){//退出
+            }else if("3".equals(line)){
+                //退出
                 break;
-            }else{//错误输入
+            }else{
+                //错误输入
                 System.out.println("输入的操作码错误!请重新数据");
                 continue;
             }
@@ -60,7 +74,12 @@ public class ConsoleController01 {
                 System.out.println("++++++++++++++++++++++++++++++");
                 continue;
             }else if("2".equals(line)){
-                System.out.println("新增..");
+                System.out.println("请输入要新增的成绩信息，格式：math,chinese,english,uid");
+                //--校验格式
+
+                //--新增成绩
+                //--成功，提示成功
+                //--失败，提示失败
             }else if("3".equals(line)){
                 System.out.println("修改..");
             }else if("4".equals(line)){
