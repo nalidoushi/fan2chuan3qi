@@ -75,4 +75,38 @@ public class MySqlUserDao implements UserDao {
             DaoUtils.close(null,ps,conn);
         }
     }
+
+    @Override
+    public User findUserByNameAndPsw(String name, String psw) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            //注册数据库驱动
+            //获取数据库连接
+            conn = DaoUtils.getConn();
+            //获取传输器
+            ps = conn.prepareStatement("select * from user where name = ? and psw = ?");
+            ps.setString(1,name);
+            ps.setString(2,psw);
+            //执行sql获取结果
+            rs = ps.executeQuery();
+            if(rs.next()){
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setName(rs.getString("name"));
+                user.setPsw(rs.getString("psw"));
+                user.setRole(rs.getInt("role"));
+                return user;
+            }else{
+                return null;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }finally {
+           //关闭资源
+           DaoUtils.close(rs,ps,conn);
+        }
+    }
 }

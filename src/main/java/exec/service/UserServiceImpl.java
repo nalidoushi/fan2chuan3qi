@@ -22,4 +22,20 @@ public class UserServiceImpl implements UserService {
         //2.将用户信息写入
         userDao.insertUser(user);
     }
+
+    /**
+     * 实现用户登录
+     * @param name 用户名
+     * @param psw 密码
+     * @return 登录的用户bean
+     */
+    @Override
+    public User login(String name, String psw) throws MsgException {
+        //根据用户名密码查找用户
+        User findUser = userDao.findUserByNameAndPsw(name,psw);
+        if(findUser == null){
+            throw new MsgException("用户名密码不正确!");
+        }
+        return findUser;
+    }
 }
